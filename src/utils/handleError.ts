@@ -1,3 +1,4 @@
+import { CannotDeleteProductError, InvalidProductDataError, ProductAlreadyExistsError } from '@/core/errors'
 import { ProductNotFoundError } from '@/core/errors/ProductNotFoundError'
 import { NextResponse } from 'next/server'
 import { ZodError } from 'zod'
@@ -16,6 +17,18 @@ export function handleError(error: unknown) {
 
   if (error instanceof ProductNotFoundError) {
     return NextResponse.json({ error: error.message }, { status: 404 })
+  }
+
+  if (error instanceof ProductAlreadyExistsError) {
+    return NextResponse.json({ error: error.message }, { status: 409 }) // Conflict
+  }
+
+  if (error instanceof InvalidProductDataError) {
+    return NextResponse.json({ error: error.message }, { status: 422 }) // Unprocessable Entity
+  }
+
+  if (error instanceof CannotDeleteProductError) {
+    return NextResponse.json({ error: error.message }, { status: 400 })
   }
 
   if (error instanceof Error) {
