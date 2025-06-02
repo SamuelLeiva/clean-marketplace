@@ -5,8 +5,8 @@ import {
   DeleteProduct,
 } from '@/core/use-cases/product'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma'
-import { UpdateProductInput } from '@/contracts/product.contract'
-import { handleError } from '@/utils/handleError'
+import { UpdateProductInput } from '@/shared/contracts/product.contract'
+import { handleError } from '@/shared/utils/handleError'
 
 const repo = new PrismaProductRepository()
 

@@ -1,4 +1,4 @@
-import { CreateProductInput } from '@/contracts/product.contract'
+import { CreateProductInput } from '@/shared/contracts/product.contract'
 import { ProductRepository } from '../../ports/ProductRepository'
 import { Product } from '../../entities/Product'
 import { randomUUID } from 'crypto'

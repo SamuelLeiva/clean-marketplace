@@ -1,4 +1,4 @@
-import { CreateProductInput } from '@/contracts/product.contract'
+import { CreateProductInput } from '@/shared/contracts/product.contract'
 import { describe, it, expect } from 'vitest'
 
 // Mocks simples para validar los contratos

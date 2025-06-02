@@ -1,4 +1,4 @@
-import { UpdateProductInput } from '@/contracts/product.contract'
+import { UpdateProductInput } from '@/shared/contracts/product.contract'
 import { Product } from '@/core/entities/Product'
 import { ProductNotFoundError } from '@/core/errors'
 import { ProductRepository } from '@/core/ports/ProductRepository'
