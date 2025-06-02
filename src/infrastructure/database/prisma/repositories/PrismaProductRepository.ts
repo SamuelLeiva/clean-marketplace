@@ -1,8 +1,8 @@
-import { Product } from "@/core/entities/Product";
-import { ProductRepository } from "@/core/ports/ProductRepository";
-import { PrismaClient } from "@prisma/client";
+import { Product } from '@/core/entities/Product'
+import { ProductRepository } from '@/core/ports/ProductRepository'
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 export class PrismaProductRepository implements ProductRepository {
   async create(product: Product): Promise<Product> {
@@ -26,5 +26,14 @@ export class PrismaProductRepository implements ProductRepository {
 
   async delete(id: string): Promise<void> {
     await prisma.product.delete({ where: { id } })
+  }
+
+  async findByName(name: string) {
+    return await prisma.product.findFirst({ where: { name } })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async isInUse(id: string) {
+    return false // temporalmente
   }
 }
