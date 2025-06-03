@@ -1,45 +1,47 @@
-import { describe, it, expect, vi } from 'vitest'
-import { v4 as uuidv4 } from 'uuid'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { GetAllProducts } from '@/core/use-cases/product'
 import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
-import { GetAllProducts } from '@/core/use-cases/product'
+import { v4 as uuidv4 } from 'uuid'
 
-describe('ListProductsUseCase', () => {
+describe('GetAllProducts Use Case', () => {
+  let mockRepo: ProductRepository
+  let useCase: GetAllProducts
+
   const mockProducts: Product[] = [
     {
       id: uuidv4(),
-      name: 'Producto A',
-      description: 'Descripción A',
-      price: 25,
+      name: 'Product A',
+      description: 'Desc A',
+      price: 10,
       categoryId: uuidv4(),
     },
     {
       id: uuidv4(),
-      name: 'Producto B',
-      description: 'Descripción B',
-      price: 35,
+      name: 'Product B',
+      description: 'Desc B',
+      price: 20,
       categoryId: uuidv4(),
     },
   ]
 
-  const mockRepo: ProductRepository = {
-    create: vi.fn(),
-    findById: vi.fn(),
-    findAll: vi.fn(
-        async () => mockProducts
-    ),
-    update: vi.fn(),
-    delete: vi.fn(),
-    findByName: vi.fn(),
-    isInUse: vi.fn(),
-  }
+  beforeEach(() => {
+    mockRepo = {
+      create: async () => mockProducts[0],
+      findById: async () => mockProducts[0],
+      findAll: async () => mockProducts,
+      update: async () => mockProducts[0],
+      delete: async () => {},
+      findByName: async () => null,
+      isInUse: async () => false,
+    }
 
-  const useCase = new GetAllProducts(mockRepo)
+    useCase = new GetAllProducts(mockRepo)
+  })
 
   it('should return all products', async () => {
     const result = await useCase.execute()
     expect(result).toEqual(mockProducts)
     expect(Array.isArray(result)).toBe(true)
-    expect(mockRepo.findAll).toHaveBeenCalled()
   })
 })

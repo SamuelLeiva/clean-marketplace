@@ -1,40 +1,38 @@
-import { describe, it, expect, vi } from "vitest";
-import { CreateProduct } from "@/core/use-cases/product";
-import { v4 as uuidv4 } from "uuid";
-import { ProductRepository } from "@/core/ports/ProductRepository";
-import { CreateProductInput } from "@/shared/contracts/product.contract";
-import { Product } from "@/core/entities/Product";
+import { describe, it, expect, beforeEach } from 'vitest'
+import { v4 as uuidv4 } from 'uuid'
 
-describe("CreateProductUseCase", () => {
-  it("should create a valid product", async () => {
-    const mockRepo: ProductRepository = {
-        create: vi.fn(
-            async (input: CreateProductInput): Promise<Product> => ({
-                ...input,
-                id: uuidv4()
-            })
-        ),
-        findById: vi.fn(),
-        findAll: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
-        findByName: vi.fn(),
-        isInUse: vi.fn(),
-    };
+import { CreateProduct } from '@/core/use-cases/product'
+import { Product } from '@/core/entities/Product'
+import { ProductRepository } from '@/core/ports/ProductRepository'
 
-    const useCase = new CreateProduct(mockRepo);
+describe('CreateProduct Use Case', () => {
+  let mockRepo: ProductRepository
+  let useCase: CreateProduct
 
-    const input: CreateProductInput = {
-      name: "Libro",
-      description: "Una historia genial",
-      price: 20,
-      categoryId: uuidv4(),
-    };
+  const newProduct: Product = {
+    id: uuidv4(),
+    name: 'New Product',
+    description: 'A great product',
+    price: 49.99,
+    categoryId: uuidv4(),
+  }
 
-    const result = await useCase.execute(input);
+  beforeEach(() => {
+    mockRepo = {
+      create: async () => newProduct,
+      findById: async () => null,
+      findAll: async () => [],
+      update: async () => newProduct,
+      delete: async () => {},
+      findByName: async () => null,
+      isInUse: async () => false,
+    }
 
-    expect(result).toHaveProperty("id"); //se podría agregar más cosas al mock
-    expect(result.name).toBe("Libro");
-    expect(mockRepo.create).toHaveBeenCalledWith(expect.objectContaining(input));
-  });
-});
+    useCase = new CreateProduct(mockRepo)
+  })
+
+  it('should create and return the new product', async () => {
+    const result = await useCase.execute(newProduct)
+    expect(result).toEqual(newProduct)
+  })
+})

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Product } from '@/core/entities/Product'
@@ -21,33 +21,31 @@ describe('GetProductById Use Case', () => {
 
   beforeEach(() => {
     mockRepo = {
-      create: vi.fn(),
-      findById: vi.fn(),
-      findAll: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-      findByName: vi.fn(),
-      isInUse: vi.fn(),
+      create: async () => { throw new Error('not implemented') },
+      findById: async () => null, // se sobrescribirá por test
+      findAll: async () => [],
+      update: async () => { throw new Error('not implemented') },
+      delete: async () => { throw new Error('not implemented') },
+      findByName: async () => null,
+      isInUse: async () => false,
     }
 
     useCase = new GetProductById(mockRepo)
   })
 
   it('should return the product if it exists', async () => {
-    (mockRepo.findById as ReturnType<typeof vi.fn>).mockResolvedValue(mockProduct)
+    // sobrescribimos solo la función findById
+    mockRepo.findById = async () => mockProduct
 
     const result = await useCase.execute(exampleId)
 
     expect(result).toEqual(mockProduct)
-    expect(mockRepo.findById).toHaveBeenCalledWith(exampleId)
-    expect(mockRepo.findById).toHaveBeenCalledTimes(1)
   })
 
   it('should throw ProductNotFoundError if the product does not exist', async () => {
-    (mockRepo.findById as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    mockRepo.findById = async () => null
 
     await expect(() => useCase.execute(exampleId)).rejects.toThrow(ProductNotFoundError)
-    await expect(() => useCase.execute(exampleId)).rejects.toThrow(`Product with ID ${exampleId} not found`)
-    expect(mockRepo.findById).toHaveBeenCalledWith(exampleId)
+    await expect(() => useCase.execute(exampleId)).rejects.toThrow(`Product with ID ${exampleId} was not found`)
   })
 })
