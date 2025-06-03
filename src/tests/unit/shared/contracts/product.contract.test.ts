@@ -7,6 +7,7 @@ describe('CreateProductInput', () => {
     const result = CreateProductInput.safeParse({
       name: 'A',
       price: -10,
+      description: 'Description',
       categoryId: 'invalid-uuid',
     })
 
@@ -20,6 +21,7 @@ describe('CreateProductInput', () => {
     const result = CreateProductInput.safeParse({
       name: 'Guitar',
       price: 200,
+      description: 'Description',
       categoryId: '9e1a8be0-5dfb-4b44-a154-25ae4721f120',
     })
 

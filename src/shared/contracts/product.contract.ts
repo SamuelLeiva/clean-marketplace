@@ -5,6 +5,10 @@ const BaseProductSchema = z.object({
     .string()
     .min(3, 'Name must be at least 3 characters')
     .max(100, 'Name must be at most 100 characters'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .max(500, 'Name must be at most 500 characters'),
   price: z
     .number({
       required_error: 'Price is required',
@@ -22,7 +26,7 @@ export const UpdateProductInput = BaseProductSchema.partial()
 
 // Salida esperada (una respuesta de producto)
 export const ProductResponse = BaseProductSchema.extend({
-    id: z.string().uuid()
+  id: z.string().uuid(),
 })
 
 // Salida esperada (lista de productos)

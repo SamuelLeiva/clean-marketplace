@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { ZodError } from 'zod'
 
 // se podría extender por ejemplo con errores de dominio, etc (ProductNotFoundError)
+// TODO: refactorizar handleError con un mapper
 export function handleError(error: unknown) {
   if (error instanceof ZodError) {
     return NextResponse.json(
