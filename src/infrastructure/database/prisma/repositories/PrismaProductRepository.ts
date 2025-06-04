@@ -1,12 +1,13 @@
 import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
+import { CreateProductInput, UpdateProductInput } from '@/shared/contracts/product.contract'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export class PrismaProductRepository implements ProductRepository {
-  async create(product: Product): Promise<Product> {
-    return await prisma.product.create({ data: product })
+  async create(input: CreateProductInput): Promise<Product> {
+    return await prisma.product.create({ data: input })
   }
 
   async findAll(): Promise<Product[]> {
@@ -17,10 +18,10 @@ export class PrismaProductRepository implements ProductRepository {
     return await prisma.product.findUnique({ where: { id } })
   }
 
-  async update(id: string, product: Partial<Product>): Promise<Product> {
+  async update(id: string, input: UpdateProductInput): Promise<Product> {
     return await prisma.product.update({
       where: { id },
-      data: product,
+      data: input,
     })
   }
 
