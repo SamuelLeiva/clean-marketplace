@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { PrismaClient } from '@prisma/client'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma'
 
@@ -6,18 +6,18 @@ const prisma = new PrismaClient()
 const repo = new PrismaProductRepository()
 
 describe('PrismaProductRepository Integration', () => {
-  beforeAll(async () => {
-    await prisma.$connect()
-  })
+  // beforeAll(async () => {
+  //   await prisma.$connect()
+  // })
 
-  afterAll(async () => {
-    await prisma.$disconnect()
-  })
+  // afterAll(async () => {
+  //   await prisma.$disconnect()
+  // })
 
-  beforeEach(async () => {
-    await prisma.product.deleteMany()
-    await prisma.category.deleteMany()
-  })
+  // beforeEach(async () => {
+  //   await prisma.product.deleteMany()
+  //   await prisma.category.deleteMany()
+  // })
 
   it('should create and find a product by id', async () => {
     const category = await prisma.category.create({
