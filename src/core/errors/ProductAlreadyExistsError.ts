@@ -5,7 +5,7 @@ export class ProductAlreadyExistsError extends BaseError {
   readonly statusCode = 409
 
   constructor(productName: string) {
-    super(`Product "${productName}" already exists`)
+    super(`Product ${productName} already exists`)
     this.name = 'ProductAlreadyExistsError'
   }
 }

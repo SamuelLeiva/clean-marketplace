@@ -8,6 +8,10 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'app/api'],
     setupFiles: ['./src/tests/setup.ts'],
+    sequence: {
+      concurrent: false
+    }
   },
 })
