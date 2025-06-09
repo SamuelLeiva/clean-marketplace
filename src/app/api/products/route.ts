@@ -2,7 +2,7 @@ import { CreateProductInput } from '@/shared/contracts/product.contract'
 import { CreateProduct, GetAllProducts } from '@/core/use-cases/product'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma'
 import { handleError } from '@/shared/utils/handleError'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const repo = new PrismaProductRepository()
 
@@ -16,7 +16,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const parsed = CreateProductInput.parse(body)

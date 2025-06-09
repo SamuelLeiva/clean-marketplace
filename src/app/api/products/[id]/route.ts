@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import {
   GetProductById,
   UpdateProduct,
@@ -10,9 +10,12 @@ import { handleError } from '@/shared/utils/handleError'
 
 const repo = new PrismaProductRepository()
 
-export async function GET(_: Request, context: { params: { id: string } }) {
+export async function GET(req: NextRequest) {
   try {
-    const { id } = context.params
+    const id = req.nextUrl.pathname.split('/').pop()
+    if (!id) {
+      return handleError(new Error('Product ID is required'))
+    }
     const useCase = new GetProductById(repo)
     const product = await useCase.execute(id)
     return NextResponse.json(product)
@@ -21,12 +24,12 @@ export async function GET(_: Request, context: { params: { id: string } }) {
   }
 }
 
-export async function PUT(
-  req: Request,
-  context: { params: { id: string } },
-) {
+export async function PUT(req: NextRequest) {
   try {
-    const { id } = context.params
+    const id = req.nextUrl.pathname.split('/').pop()
+    if (!id) {
+      return handleError(new Error('Product ID is required'))
+    }
     const body = await req.json()
     const parsed = UpdateProductInput.parse(body)
 
@@ -39,12 +42,12 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _: Request,
-  context: { params: { id: string } },
-) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { id } = context.params
+    const id = req.nextUrl.pathname.split('/').pop()
+    if (!id) {
+      return handleError(new Error('Product ID is required'))
+    }
     const useCase = new DeleteProduct(repo)
     await useCase.execute(id)
 
