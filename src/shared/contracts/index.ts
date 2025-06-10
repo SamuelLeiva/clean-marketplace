@@ -1,1 +1,6 @@
-export * from '@/shared/contracts'
+export * from './category.contract'
+export * from './order.contract'
+export * from './orderItem.contract'
+export * from './product.contract'
+export * from './user.contract'
+export * from './payment.contract'
