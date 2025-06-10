@@ -20,19 +20,16 @@ const BaseProductSchema = z.object({
   updatedAt: z.string().datetime(),
 })
 
-// Entrada para crear un producto
 export const CreateProductInput = BaseProductSchema.omit({
   createdAt: true,
   updatedAt: true,
 })
 
-// Entrada para actualizar un producto (campos opcionales)
 export const UpdateProductInput = BaseProductSchema.partial().omit({
   createdAt: true,
   updatedAt: true,
 })
 
-// Salida esperada (una respuesta de producto)
 export const ProductResponse = BaseProductSchema.extend({
   id: z.string().uuid(),
 }).omit({
@@ -40,10 +37,8 @@ export const ProductResponse = BaseProductSchema.extend({
   updatedAt: true,
 })
 
-// Salida esperada (lista de productos)
 export const ProductListResponse = z.array(ProductResponse)
 
-// Tipos inferidos
 export type CreateProductInput = z.infer<typeof CreateProductInput>
 export type UpdateProductInput = z.infer<typeof UpdateProductInput>
 export type ProductResponse = z.infer<typeof ProductResponse>
