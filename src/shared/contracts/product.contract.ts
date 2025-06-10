@@ -16,17 +16,28 @@ const BaseProductSchema = z.object({
     })
     .positive('Price must be greater than 0'),
   categoryId: z.string().uuid('Invalid category ID'),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 })
 
 // Entrada para crear un producto
-export const CreateProductInput = BaseProductSchema
+export const CreateProductInput = BaseProductSchema.omit({
+  createdAt: true,
+  updatedAt: true,
+})
 
 // Entrada para actualizar un producto (campos opcionales)
-export const UpdateProductInput = BaseProductSchema.partial()
+export const UpdateProductInput = BaseProductSchema.partial().omit({
+  createdAt: true,
+  updatedAt: true,
+})
 
 // Salida esperada (una respuesta de producto)
 export const ProductResponse = BaseProductSchema.extend({
   id: z.string().uuid(),
+}).omit({
+  createdAt: true,
+  updatedAt: true,
 })
 
 // Salida esperada (lista de productos)
