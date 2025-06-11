@@ -1,4 +1,4 @@
-import { Category } from '@/core/entities/Category'
+import { Category } from '@/core/entities'
 import { CategoryRepository } from '@/core/ports'
 
 export class GetAllCategories {

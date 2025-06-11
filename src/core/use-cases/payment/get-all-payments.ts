@@ -1,4 +1,4 @@
-import { Payment } from '../../entities/Payment'
+import { Payment } from '@/core/entities'
 import { PaymentRepository } from '@/core/ports'
 
 export class GetAllPayments {
