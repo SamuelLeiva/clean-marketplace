@@ -6,4 +6,8 @@ export interface SellerRepository {
   findAll(): Promise<Seller[]>
   update(id: string, Seller: Partial<Seller>): Promise<Seller>
   delete(id: string): Promise<void>
+
+  // Métodos adicionales al CRUD clásico
+  findByName(name: string): Promise<Seller | null>
+  isInUse(id: string): Promise<boolean>
 }

@@ -1,4 +1,4 @@
-import { InvalidProductDataError } from '@/core/errors'
+import { InvalidProductDataError } from '@/core/errors/product'
 import { describe, expect, test } from 'vitest'
 
 describe('InvalidProductDataError', () => {

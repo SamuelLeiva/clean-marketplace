@@ -1,5 +1,5 @@
-import { CannotDeleteProductError, InvalidProductDataError, ProductAlreadyExistsError } from '@/core/errors'
-import { ProductNotFoundError } from '@/core/errors/ProductNotFoundError'
+import { CannotDeleteProductError, InvalidProductDataError, ProductAlreadyExistsError } from '@/core/errors/product'
+import { ProductNotFoundError } from '@/core/errors/product/ProductNotFoundError'
 import { NextResponse } from 'next/server'
 import { ZodError } from 'zod'
 

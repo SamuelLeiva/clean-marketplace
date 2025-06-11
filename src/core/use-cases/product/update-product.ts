@@ -1,7 +1,8 @@
-import { UpdateProductInput } from '@/shared/contracts/product.contract'
+
 import { Product } from '@/core/entities/Product'
-import { InvalidProductDataError, ProductNotFoundError } from '@/core/errors'
+import { InvalidProductDataError, ProductNotFoundError } from '@/core/errors/product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
+import { UpdateProductInput } from '@/shared/contracts'
 
 export class UpdateProduct {
   constructor(private repo: ProductRepository) {}

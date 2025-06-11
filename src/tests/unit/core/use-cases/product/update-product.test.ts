@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { UpdateProduct } from '@/core/use-cases/product'
 import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
-import { InvalidProductDataError } from '@/core/errors/InvalidProductDataError'
+import { InvalidProductDataError } from '@/core/errors/product/InvalidProductDataError'
 
 const existingProduct: Product = {
   id: 'product-id',

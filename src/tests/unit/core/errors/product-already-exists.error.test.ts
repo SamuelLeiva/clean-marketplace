@@ -1,4 +1,4 @@
-import { ProductAlreadyExistsError } from '@/core/errors'
+import { ProductAlreadyExistsError } from '@/core/errors/product'
 import { describe, expect, test } from 'vitest'
 
 describe('ProductAlreadyExistsError', () => {

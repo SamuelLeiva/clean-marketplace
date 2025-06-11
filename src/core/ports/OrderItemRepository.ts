@@ -7,4 +7,7 @@ export interface OrderItemRepository {
   update(id: string, OrderItem: Partial<OrderItem>): Promise<OrderItem>
   delete(id: string): Promise<void>
 
+  // Métodos adicionales al CRUD clásico
+  findByName(name: string): Promise<OrderItem | null>
+  isInUse(id: string): Promise<boolean>
 }

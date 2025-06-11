@@ -7,4 +7,7 @@ export interface PaymentRepository {
   update(id: string, Payment: Partial<Payment>): Promise<Payment>
   delete(id: string): Promise<void>
 
+  // Métodos adicionales al CRUD clásico
+  findByName(name: string): Promise<Payment | null>
+  isInUse(id: string): Promise<boolean>
 }

@@ -2,7 +2,7 @@
 import { DeleteProduct } from '@/core/use-cases/product'
 import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
-import { CannotDeleteProductError } from '@/core/errors/CannotDeleteProductError'
+import { CannotDeleteProductError } from '@/core/errors/product/CannotDeleteProductError'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 describe('DeleteProduct Use Case', () => {

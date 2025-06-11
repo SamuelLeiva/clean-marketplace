@@ -1,4 +1,4 @@
-import { ProductNotFoundError } from '@/core/errors/ProductNotFoundError'
+import { ProductNotFoundError } from '@/core/errors/product/ProductNotFoundError'
 import { Product } from '../../entities/Product'
 import { ProductRepository } from '../../ports/ProductRepository'
 

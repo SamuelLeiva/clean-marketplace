@@ -1,4 +1,4 @@
-import { CannotDeleteProductError, ProductNotFoundError } from '@/core/errors'
+import { CannotDeleteProductError, ProductNotFoundError } from '@/core/errors/product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
 
 export class DeleteProduct {

@@ -1,4 +1,4 @@
-import { ProductNotFoundError } from '@/core/errors'
+import { ProductNotFoundError } from '@/core/errors/product'
 import { describe, expect, test } from 'vitest'
 
 describe('ProductNotFoundError', () => {

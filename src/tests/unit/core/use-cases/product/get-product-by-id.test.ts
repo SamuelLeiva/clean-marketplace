@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
 import { GetProductById } from '@/core/use-cases/product'
-import { ProductNotFoundError } from '@/core/errors/ProductNotFoundError'
+import { ProductNotFoundError } from '@/core/errors/product/ProductNotFoundError'
 
 describe('GetProductById Use Case', () => {
   let mockRepo: ProductRepository

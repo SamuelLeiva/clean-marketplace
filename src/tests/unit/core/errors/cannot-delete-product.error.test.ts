@@ -1,4 +1,4 @@
-import { CannotDeleteProductError } from '@/core/errors'
+import { CannotDeleteProductError } from '@/core/errors/product'
 import { describe, expect, test } from 'vitest'
 
 describe('CannotDeleteProductError', () => {

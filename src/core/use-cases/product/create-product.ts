@@ -1,8 +1,8 @@
 import { CreateProductInput } from '@/shared/contracts/product.contract'
-import { ProductRepository } from '../../ports/ProductRepository'
-import { Product } from '../../entities/Product'
 import { randomUUID } from 'crypto'
-import { ProductAlreadyExistsError } from '@/core/errors'
+import { ProductAlreadyExistsError } from '@/core/errors/product'
+import { ProductRepository } from '@/core/ports'
+import { Product } from '@/core/entities'
 
 export class CreateProduct {
   constructor(private repo: ProductRepository) {}
