@@ -1,15 +1,15 @@
 import { UserNotFoundError } from '@/core/errors/user'
-import { User } from '../../entities/User'
-import { UserRepository } from '../../ports/UserRepository'
+import { User } from '@/core/entities'
+import { UserRepository } from '@/core/ports'
 
 export class GetUserById {
   constructor(private repo: UserRepository) {}
 
   async execute(id: string): Promise<User | null> {
-    const User = await this.repo.findById(id)
-    if (!User) {
+    const user = await this.repo.findById(id)
+    if (!user) {
       throw new UserNotFoundError(id)
     }
-    return User
+    return user
   }
 }

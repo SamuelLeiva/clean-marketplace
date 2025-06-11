@@ -1,7 +1,7 @@
 
-import { User } from '@/core/entities/User'
+import { User } from '@/core/entities'
 import { UserNotFoundError } from '@/core/errors/user'
-import { UserRepository } from '@/core/ports/UserRepository'
+import { UserRepository } from '@/core/ports'
 import { UpdateUserInput } from '@/shared/contracts'
 
 export class UpdateUser {

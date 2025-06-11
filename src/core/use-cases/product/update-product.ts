@@ -1,7 +1,7 @@
 
-import { Product } from '@/core/entities/Product'
+import { Product } from '@/core/entities'
 import { InvalidProductDataError, ProductNotFoundError } from '@/core/errors/product'
-import { ProductRepository } from '@/core/ports/ProductRepository'
+import { ProductRepository } from '@/core/ports'
 import { UpdateProductInput } from '@/shared/contracts'
 
 export class UpdateProduct {

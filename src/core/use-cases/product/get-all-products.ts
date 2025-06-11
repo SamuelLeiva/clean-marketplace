@@ -1,5 +1,5 @@
-import { Product } from '../../entities/Product'
-import { ProductRepository } from '../../ports/ProductRepository'
+import { Product } from '@/core/entities'
+import { ProductRepository } from '@/core/ports'
 
 export class GetAllProducts {
   constructor(private repo: ProductRepository) {}

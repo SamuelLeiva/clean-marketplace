@@ -1,7 +1,7 @@
 
 import { CategoryNotFoundError } from '@/core/errors/category'
-import { Category } from '../../entities/Category'
-import { CategoryRepository } from '../../ports/CategoryRepository'
+import { Category } from '@/core/entities'
+import { CategoryRepository } from '@/core/ports'
 
 export class GetCategoryById {
   constructor(private repo: CategoryRepository) {}

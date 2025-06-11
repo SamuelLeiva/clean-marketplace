@@ -1,5 +1,5 @@
 import { CannotDeleteUserError, UserNotFoundError } from '@/core/errors/user'
-import { UserRepository } from '@/core/ports/UserRepository'
+import { UserRepository } from '@/core/ports'
 
 export class DeleteUser {
   constructor(private repo: UserRepository) {}

@@ -1,5 +1,5 @@
 import { CannotDeleteCategoryError, CategoryNotFoundError } from '@/core/errors/category'
-import { CategoryRepository } from '@/core/ports/CategoryRepository'
+import { CategoryRepository } from '@/core/ports'
 
 export class DeleteCategory {
   constructor(private repo: CategoryRepository) {}

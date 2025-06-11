@@ -1,4 +1,4 @@
-import { CreateProductInput } from '@/shared/contracts/product.contract'
+import { CreateProductInput } from '@/shared/contracts'
 import { randomUUID } from 'crypto'
 import { ProductAlreadyExistsError } from '@/core/errors/product'
 import { ProductRepository } from '@/core/ports'

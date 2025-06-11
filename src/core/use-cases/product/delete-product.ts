@@ -1,5 +1,5 @@
 import { CannotDeleteProductError, ProductNotFoundError } from '@/core/errors/product'
-import { ProductRepository } from '@/core/ports/ProductRepository'
+import { ProductRepository } from '@/core/ports'
 
 export class DeleteProduct {
   constructor(private repo: ProductRepository) {}

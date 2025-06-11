@@ -1,7 +1,7 @@
 
-import { Category } from '@/core/entities/Category'
+import { Category } from '@/core/entities'
 import { CategoryNotFoundError } from '@/core/errors/category'
-import { CategoryRepository } from '@/core/ports/CategoryRepository'
+import { CategoryRepository } from '@/core/ports'
 import { UpdateCategoryInput } from '@/shared/contracts'
 
 export class UpdateCategory {

@@ -1,5 +1,5 @@
-import { Category } from '../../entities/Category'
-import { CategoryRepository } from '../../ports/CategoryRepository'
+import { Category } from '@/core/entities/Category'
+import { CategoryRepository } from '@/core/ports'
 
 export class GetAllCategories {
   constructor(private repo: CategoryRepository) {}

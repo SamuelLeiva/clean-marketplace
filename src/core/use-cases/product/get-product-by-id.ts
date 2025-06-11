@@ -1,6 +1,6 @@
-import { ProductNotFoundError } from '@/core/errors/product/ProductNotFoundError'
-import { Product } from '../../entities/Product'
-import { ProductRepository } from '../../ports/ProductRepository'
+import { ProductNotFoundError } from '@/core/errors/product'
+import { Product } from '@/core/entities'
+import { ProductRepository } from '@/core/ports'
 
 export class GetProductById {
   constructor(private repo: ProductRepository) {}
