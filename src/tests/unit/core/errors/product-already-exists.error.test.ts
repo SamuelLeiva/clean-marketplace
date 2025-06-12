@@ -7,7 +7,7 @@ describe('ProductAlreadyExistsError', () => {
     const err = new ProductAlreadyExistsError(productName)
 
     expect(err).toBeInstanceOf(ProductAlreadyExistsError)
-    expect(err.message).toBe(`Product ${productName} already exists`)
+    expect(err.message).toBe(`Product with name ${productName} already exists`)
     expect(err.code).toBe('PRODUCT_ALREADY_EXISTS')
     expect(err.statusCode).toBe(409)
   })
