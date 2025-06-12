@@ -14,7 +14,8 @@ const BaseProductSchema = z.object({
       required_error: 'Price is required',
       invalid_type_error: 'Price must be a number',
     })
-    .positive('Price must be greater than 0'),
+    .positive('Price must be greater than 0')
+    .finite(),
   categoryId: z.string().uuid('Invalid category ID'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
