@@ -51,7 +51,7 @@ describe('DeleteProduct Use Case', () => {
 
       // Act & Assert
       await expect(deleteProduct.execute(productId)).rejects.toThrow(ProductNotFoundError)
-      await expect(deleteProduct.execute(productId)).rejects.toThrow(`Product with id ${productId} not found`)
+      await expect(deleteProduct.execute(productId)).rejects.toThrow(`Product with ID ${productId} was not found`)
 
       expect(mockRepo.isInUse).not.toHaveBeenCalled()
       expect(mockRepo.delete).not.toHaveBeenCalled()
@@ -69,7 +69,7 @@ describe('DeleteProduct Use Case', () => {
 
       // Act & Assert
       await expect(deleteProduct.execute(productId)).rejects.toThrow(CannotDeleteProductError)
-      await expect(deleteProduct.execute(productId)).rejects.toThrow(`Cannot delete product ${productId} because it is in use`)
+      await expect(deleteProduct.execute(productId)).rejects.toThrow(`Cannot delete product with ID ${productId} because it is in use`)
 
       expect(mockRepo.delete).not.toHaveBeenCalled()
     })
