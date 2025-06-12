@@ -5,7 +5,7 @@ export class CategoryAlreadyExistsError extends BaseError {
   readonly statusCode = 409
 
   constructor(categoryName: string) {
-    super(`Category ${categoryName} already exists`)
+    super(`Category with name ${categoryName} already exists`)
     this.name = 'CategoryAlreadyExistsError'
   }
 }
