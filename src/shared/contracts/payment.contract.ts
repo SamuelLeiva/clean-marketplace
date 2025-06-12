@@ -7,7 +7,7 @@ const BasePaymentSchema = z.object({
     status: z.enum(['pending', 'success', 'failed']),
     createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreatePaymentInput = BasePaymentSchema.omit({
   createdAt: true,

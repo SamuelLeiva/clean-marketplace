@@ -13,7 +13,7 @@ const BaseUserSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateUserInput = BaseUserSchema.omit({
   createdAt: true,

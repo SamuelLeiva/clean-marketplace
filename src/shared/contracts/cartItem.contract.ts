@@ -6,7 +6,7 @@ const BaseCartItemSchema = z.object({
   quantity: z.number().min(1).default(1),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateCartItemInput = BaseCartItemSchema.omit({
   createdAt: true,

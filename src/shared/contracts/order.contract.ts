@@ -7,7 +7,7 @@ const BaseOrderSchema = z.object({
   paymentId: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateOrderInput = BaseOrderSchema.omit({
   createdAt: true,

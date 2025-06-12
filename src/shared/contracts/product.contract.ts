@@ -18,7 +18,7 @@ const BaseProductSchema = z.object({
   categoryId: z.string().uuid('Invalid category ID'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateProductInput = BaseProductSchema.omit({
   createdAt: true,

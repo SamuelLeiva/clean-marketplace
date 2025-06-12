@@ -19,7 +19,7 @@ const BaseSellerSchema = z.object({
   totalSales: z.number().int().min(0),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateSellerInput = BaseSellerSchema.omit({
   createdAt: true,

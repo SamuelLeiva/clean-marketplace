@@ -7,7 +7,7 @@ const BaseOrderItemSchema = z.object({
   unitPrice: z.number().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateOrderItemInput = BaseOrderItemSchema.omit({
   createdAt: true,

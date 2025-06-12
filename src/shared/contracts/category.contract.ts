@@ -12,7 +12,7 @@ const BaseCategorySchema = z.object({
     .optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-})
+}).strict()
 
 export const CreateCategoryInput = BaseCategorySchema.omit({
   createdAt: true,
