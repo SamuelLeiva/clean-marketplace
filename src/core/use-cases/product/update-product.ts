@@ -1,6 +1,5 @@
-
 import { Product } from '@/core/entities'
-import { InvalidProductDataError, ProductNotFoundError } from '@/core/errors/product'
+import { ProductNotFoundError } from '@/core/errors/product'
 import { ProductRepository } from '@/core/ports'
 import { UpdateProductInput } from '@/shared/contracts'
 
@@ -12,13 +11,6 @@ export class UpdateProduct {
     if (!product) {
       throw new ProductNotFoundError(id)
     }
-
-    //TODO: añadir validaciones en todos los use cases por si son llamados por tests u otros entornos
-
-    if (input.price !== undefined && input.price < 0) {
-      throw new InvalidProductDataError('Price cannot be negative')
-    }
-
     return await this.repo.update(id, input)
   }
 }
