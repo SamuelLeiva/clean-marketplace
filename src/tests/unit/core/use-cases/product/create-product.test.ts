@@ -1,440 +1,319 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CreateProduct } from '@/core/use-cases/product'
-import { ProductRepository } from '@/core/ports'
+import { CreateProduct } from '@/core/use-cases/product' // Adjust path as needed
+import { ProductRepository } from '@/core/ports' // Adjust path as needed
 import { Product } from '@/core/entities'
-import { CreateProductInput } from '@/shared/contracts'
-import { ProductAlreadyExistsError } from '@/core/errors/product'
-import { randomUUID } from 'crypto'
+import { CreateProductInput } from '@/shared/contracts' // Import the specific input type
+import { ProductAlreadyExistsError } from '@/core/errors/product' // Ensure this error is defined
 
-// Mock del módulo crypto
-vi.mock('crypto', () => ({
-  randomUUID: vi.fn()
-}))
+// Note: No need to mock 'crypto' randomUUID here, as the use case doesn't generate the ID.
+// The repository is assumed to generate it and the timestamps.
 
 describe('CreateProduct Use Case', () => {
   let createProduct: CreateProduct
   let mockRepo: ProductRepository
-  const mockUUID = '123e4567-e89b-12d3-a456-426614174000'
-  const validCategoryId = '123e4567-e89b-12d3-a456-426614174001'
+
+  // A constant ID for the created product, as returned by the mock repository
+  const mockGeneratedId = 'new-product-id-abc'
+  const mockCreatedAt = '2025-06-13T10:00:00.000Z'
+  const mockUpdatedAt = '2025-06-13T10:00:00.000Z' // Initially same as createdAt
 
   beforeEach(() => {
-    // Crear mocks frescos para cada test
+    // Create fresh mocks for each test
     mockRepo = {
-      findByName: vi.fn(),
-      create: vi.fn(),
+      findByName: vi.fn(), // Mock for checking existing products
+      create: vi.fn(), // Mock for creating the product
       findById: vi.fn(),
       findAll: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
-      isInUse: vi.fn()
+      isInUse: vi.fn(),
     }
-    
+
     createProduct = new CreateProduct(mockRepo)
-    
-    // Configurar mock de randomUUID
-    vi.mocked(randomUUID).mockReturnValue(mockUUID)
-    
-    // Limpiar todos los mocks
+
+    // Clear all mocks before each test
     vi.clearAllMocks()
   })
 
-  describe('Successful product creation', () => {
-    it('should create a new product when name does not exist', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'iPhone 15',
-        description: 'Latest Apple smartphone with advanced features',
-        price: 999.99,
-        categoryId: validCategoryId
-      }
+  // Successful Product Creation
 
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
+  it('should create a new product when its name does not exist', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Smart TV 65"',
+      description: 'Ultra HD TV with smart features and voice control.',
+      price: 1299.99,
+      categoryId: 'category-tv-123',
+    }
 
-      // Mock: producto no existe
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      // Mock: creación exitosa
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
+    // The full Product object that the repository mock will return after creation
+    const createdProduct: Product = {
+      id: mockGeneratedId,
+      ...input,
+      createdAt: mockCreatedAt,
+      updatedAt: mockUpdatedAt,
+    }
 
-      // Act
-      const result = await createProduct.execute(input)
+    // Mock: Product does not exist by name
+    vi.mocked(mockRepo.findByName).mockResolvedValue(null)
+    // Mock: Creation is successful and returns the full Product entity
+    vi.mocked(mockRepo.create).mockResolvedValue(createdProduct)
 
-      // Assert
-      expect(mockRepo.findByName).toHaveBeenCalledOnce()
-      expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
-      
-      expect(randomUUID).toHaveBeenCalledOnce()
-      
-      expect(mockRepo.create).toHaveBeenCalledOnce()
-      expect(mockRepo.create).toHaveBeenCalledWith(expectedProduct)
-      
-      expect(result).toEqual(expectedProduct)
-    })
+    // Act
+    const result = await createProduct.execute(input)
 
-    it('should generate unique ID for each product creation', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'MacBook Pro',
-        description: 'Professional laptop for creative professionals',
-        price: 2499.99,
-        categoryId: validCategoryId
-      }
+    // Assert
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
 
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
+    expect(mockRepo.create).toHaveBeenCalledOnce()
+    // The use case passes the exact input to the repository's create method
+    expect(mockRepo.create).toHaveBeenCalledWith(input)
 
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
+    // The result should be the full Product entity returned by the repository
+    expect(result).toEqual(createdProduct)
+    expect(result.id).toBe(mockGeneratedId)
+    expect(result.createdAt).toBe(mockCreatedAt)
+    expect(result.updatedAt).toBe(mockUpdatedAt)
+  })
 
-      // Act
+  it('should create a product with minimum valid input values', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'ABC', // Min 3 chars
+      description: 'This is a description with at least ten characters.', // Min 10 chars
+      price: 0.01, // Positive price
+      categoryId: 'valid-uuid-123e-4567-a89b', // Valid UUID
+    }
+    const createdProduct: Product = {
+      id: mockGeneratedId,
+      ...input,
+      createdAt: mockCreatedAt,
+      updatedAt: mockUpdatedAt,
+    }
+
+    vi.mocked(mockRepo.findByName).mockResolvedValue(null)
+    vi.mocked(mockRepo.create).mockResolvedValue(createdProduct)
+
+    // Act
+    const result = await createProduct.execute(input)
+
+    // Assert
+    expect(mockRepo.create).toHaveBeenCalledWith(input)
+    expect(result.name).toBe(input.name)
+    expect(result.description).toBe(input.description)
+    expect(result.price).toBe(input.price)
+  })
+
+  it('should create a product with maximum valid input values', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'A'.repeat(100), // Max 100 chars
+      description: 'B'.repeat(500), // Max 500 chars
+      price: 999999999.99, // Large positive price
+      categoryId: 'valid-uuid-abcd-efgh-ijkl',
+    }
+    const createdProduct: Product = {
+      id: mockGeneratedId,
+      ...input,
+      createdAt: mockCreatedAt,
+      updatedAt: mockUpdatedAt,
+    }
+
+    vi.mocked(mockRepo.findByName).mockResolvedValue(null)
+    vi.mocked(mockRepo.create).mockResolvedValue(createdProduct)
+
+    // Act
+    const result = await createProduct.execute(input)
+
+    // Assert
+    expect(mockRepo.create).toHaveBeenCalledWith(input)
+    expect(result.name).toBe(input.name)
+    expect(result.description).toBe(input.description)
+    expect(result.price).toBe(input.price)
+  })
+
+  // Product Already Exists Scenarios
+
+  it('should throw ProductAlreadyExistsError when a product with the same name already exists', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Existing Product Name',
+      description: 'Description for an existing product.',
+      price: 100.0,
+      categoryId: 'cat-id-exists-1',
+    }
+
+    const existingProduct: Product = {
+      id: 'existing-prod-id',
+      name: 'Existing Product Name',
+      description: 'Original description',
+      price: 50.0,
+      categoryId: 'cat-id-exists-2',
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+    }
+
+    // Mock: Product with this name already exists
+    vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
+
+    // Act & Assert
+    await expect(createProduct.execute(input)).rejects.toThrow(
+      ProductAlreadyExistsError,
+    )
+    await expect(createProduct.execute(input)).rejects.toThrow(
+      `Product with name ${input.name} already exists`,
+    )
+    expect(mockRepo.findByName).toHaveBeenCalled()
+    expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
+    expect(mockRepo.create).not.toHaveBeenCalled() // Create should NOT be called if product exists
+  })
+
+  it('should not call create when a product with the same name already exists', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Duplicate Product',
+      description: 'Another duplicate product.',
+      price: 25.0,
+      categoryId: 'cat-dup-id',
+    }
+    const existingProduct: Product = {
+      id: 'dup-prod-id',
+      ...input,
+      createdAt: '2025-01-02T00:00:00.000Z',
+      updatedAt: '2025-01-02T00:00:00.000Z',
+    }
+
+    vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
+
+    // Act
+    try {
       await createProduct.execute(input)
+    } catch (error) {
+      // Catch error to allow assertions on mock calls
+      expect(error).toBeInstanceOf(ProductAlreadyExistsError)
+    }
 
-      // Assert
-      expect(randomUUID).toHaveBeenCalledOnce()
-      expect(mockRepo.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: mockUUID,
-          name: input.name,
-          description: input.description,
-          price: input.price,
-          categoryId: input.categoryId
-        })
-      )
-    })
-
-    it('should preserve all input data in created product', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Gaming Laptop',
-        description: 'High-performance gaming laptop with RTX graphics',
-        price: 1599.50,
-        categoryId: validCategoryId
-      }
-
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
-      const result = await createProduct.execute(input)
-
-      // Assert
-      expect(result.name).toBe(input.name)
-      expect(result.description).toBe(input.description)
-      expect(result.price).toBe(input.price)
-      expect(result.categoryId).toBe(input.categoryId)
-      expect(result.id).toBe(mockUUID)
-    })
+    // Assert
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.create).not.toHaveBeenCalled()
   })
 
-  describe('Product already exists scenarios', () => {
-    it('should throw ProductAlreadyExistsError when product with same name exists', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'iPhone 15',
-        description: 'Latest Apple smartphone with advanced features',
-        price: 999.99,
-        categoryId: validCategoryId
-      }
+  // Repository Error Handling
 
-      const existingProduct: Product = {
-        id: 'existing-id',
-        name: 'iPhone 15',
-        description: 'Existing iPhone description',
-        price: 899.99,
-        categoryId: validCategoryId
-      }
+  it('should propagate repository findByName errors', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Error Test Product',
+      description: 'Description for error test.',
+      price: 10.0,
+      categoryId: 'cat-error-id',
+    }
+    const repositoryError = new Error(
+      'Database connection failed during findByName',
+    )
+    vi.mocked(mockRepo.findByName).mockRejectedValue(repositoryError)
 
-      // Mock: producto ya existe
-      vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
-
-      // Act & Assert
-      await expect(createProduct.execute(input)).rejects.toThrow(ProductAlreadyExistsError)
-      await expect(createProduct.execute(input)).rejects.toThrow(`Product with name ${input.name} already exists`)
-    })
-
-    it('should not call create when product already exists', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Existing Product',
-        description: 'This product already exists in the system',
-        price: 299.99,
-        categoryId: validCategoryId
-      }
-
-      const existingProduct: Product = {
-        id: 'existing-id',
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
-
-      // Act & Assert
-      try {
-        await createProduct.execute(input)
-      } catch (error) {
-        expect(error).toBeInstanceOf(ProductAlreadyExistsError)
-      }
-
-      expect(mockRepo.findByName).toHaveBeenCalledOnce()
-      expect(mockRepo.create).not.toHaveBeenCalled()
-      expect(randomUUID).not.toHaveBeenCalled()
-    })
-
-    it('should check for existing product with exact name match', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'iPhone 15 Pro Max',
-        description: 'Top tier iPhone with maximum features',
-        price: 1199.99,
-        categoryId: validCategoryId
-      }
-
-      const existingProduct: Product = {
-        id: 'existing-id',
-        name: 'iPhone 15 Pro Max',
-        description: 'Different description',
-        price: 999.99,
-        categoryId: 'different-category'
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
-
-      // Act & Assert
-      await expect(createProduct.execute(input)).rejects.toThrow(ProductAlreadyExistsError)
-      expect(mockRepo.findByName).toHaveBeenCalledWith('iPhone 15 Pro Max')
-    })
+    // Act & Assert
+    await expect(createProduct.execute(input)).rejects.toThrow(
+      'Database connection failed during findByName',
+    )
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.create).not.toHaveBeenCalled() // Create should not be called
   })
 
-  describe('Repository error handling', () => {
-    it('should propagate repository findByName errors', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Test Product',
-        description: 'Test product description for error handling',
-        price: 99.99,
-        categoryId: validCategoryId
-      }
+  it('should propagate repository create errors', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Failed Create Product',
+      description: 'Product that will fail on creation.',
+      price: 20.0,
+      categoryId: 'cat-fail-id',
+    }
+    const repositoryError = new Error('Failed to save product in database')
+    vi.mocked(mockRepo.findByName).mockResolvedValue(null) // Product name is unique
+    vi.mocked(mockRepo.create).mockRejectedValue(repositoryError) // Simulate creation failure
 
-      const repositoryError = new Error('Database connection failed')
-      vi.mocked(mockRepo.findByName).mockRejectedValue(repositoryError)
-
-      // Act & Assert
-      await expect(createProduct.execute(input)).rejects.toThrow('Database connection failed')
-      expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
-      expect(mockRepo.create).not.toHaveBeenCalled()
-    })
-
-    it('should propagate repository create errors', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Test Product',
-        description: 'Test product description for error handling',
-        price: 99.99,
-        categoryId: validCategoryId
-      }
-
-      const repositoryError = new Error('Failed to save product')
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockRejectedValue(repositoryError)
-
-      // Act & Assert
-      await expect(createProduct.execute(input)).rejects.toThrow('Failed to save product')
-      expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
-      expect(mockRepo.create).toHaveBeenCalledOnce()
-    })
+    // Act & Assert
+    await expect(createProduct.execute(input)).rejects.toThrow(
+      'Failed to save product in database',
+    )
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.create).toHaveBeenCalledOnce() // Create was attempted and failed
+    expect(mockRepo.create).toHaveBeenCalledWith(input)
   })
 
-  describe('Input validation scenarios', () => {
-    it('should handle products with minimum valid values', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Min', // 3 characters (minimum)
-        description: 'Min desc!!', // 10 characters (minimum)
-        price: 0.01, // minimum positive value
-        categoryId: validCategoryId
-      }
+  // Method Call Sequence
 
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
+  it('should call repository methods in the correct order for successful creation', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Sequence Product',
+      description: 'Testing call sequence.',
+      price: 5.0,
+      categoryId: 'cat-seq-id',
+    }
+    const createdProduct: Product = {
+      id: mockGeneratedId,
+      ...input,
+      createdAt: mockCreatedAt,
+      updatedAt: mockUpdatedAt,
+    }
 
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
+    vi.mocked(mockRepo.findByName).mockResolvedValue(null)
+    vi.mocked(mockRepo.create).mockResolvedValue(createdProduct)
 
-      // Act
-      const result = await createProduct.execute(input)
+    // Act
+    await createProduct.execute(input)
 
-      // Assert
-      expect(result).toEqual(expectedProduct)
-      expect(mockRepo.findByName).toHaveBeenCalledWith('Min')
-    })
+    // Assert
+    const findByNameCall = vi.mocked(mockRepo.findByName).mock.calls[0]
+    const createCall = vi.mocked(mockRepo.create).mock.calls[0]
 
-    it('should handle products with maximum valid values', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'A'.repeat(100), // 100 characters (maximum)
-        description: 'B'.repeat(500), // 500 characters (maximum)
-        price: 999999.99,
-        categoryId: validCategoryId
-      }
+    expect(findByNameCall).toBeDefined()
+    expect(createCall).toBeDefined()
 
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
+    // Verify findByName is called before create
+    expect(vi.mocked(mockRepo.findByName)).toHaveBeenCalledBefore(
+      vi.mocked(mockRepo.create),
+    )
 
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
-      const result = await createProduct.execute(input)
-
-      // Assert
-      expect(result).toEqual(expectedProduct)
-      expect(mockRepo.findByName).toHaveBeenCalledWith(input.name)
-    })
-
-    it('should handle products with decimal prices', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Decimal Product',
-        description: 'Product with precise decimal pricing',
-        price: 123.456789,
-        categoryId: validCategoryId
-      }
-
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
-      const result = await createProduct.execute(input)
-
-      // Assert
-      expect(result.price).toBe(123.456789)
-    })
+    // Ensure only these methods were called
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.create).toHaveBeenCalledOnce()
+    expect(mockRepo.findById).not.toHaveBeenCalled()
+    expect(mockRepo.findAll).not.toHaveBeenCalled()
+    expect(mockRepo.update).not.toHaveBeenCalled()
+    expect(mockRepo.delete).not.toHaveBeenCalled()
+    expect(mockRepo.isInUse).not.toHaveBeenCalled()
   })
 
-  describe('Method call sequence', () => {
-    it('should call repository methods in correct order', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Sequence Test',
-        description: 'Testing method call sequence',
-        price: 199.99,
-        categoryId: validCategoryId
-      }
+  it('should only call findByName if product already exists', async () => {
+    // Arrange
+    const input: CreateProductInput = {
+      name: 'Only FindByName',
+      description: 'Product for checking call order.',
+      price: 1.0,
+      categoryId: 'cat-only-find-id',
+    }
+    const existingProduct: Product = {
+      id: 'existing-id-call',
+      ...input,
+      createdAt: '2025-01-03T00:00:00.000Z',
+      updatedAt: '2025-01-03T00:00:00.000Z',
+    }
 
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
+    vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
 
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
+    // Act
+    try {
       await createProduct.execute(input)
+    } catch {
+      // Catch error to allow assertions on mock calls
+    }
 
-      // Assert
-      const findByNameCall = vi.mocked(mockRepo.findByName).mock.calls[0]
-      const createCall = vi.mocked(mockRepo.create).mock.calls[0]
-      
-      expect(findByNameCall).toBeDefined()
-      expect(createCall).toBeDefined()
-      
-      // Verificar que findByName se llamó antes que create
-      expect(vi.mocked(mockRepo.findByName)).toHaveBeenCalledBefore(vi.mocked(mockRepo.create))
-    })
-
-    it('should not call randomUUID when product already exists', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Existing Product',
-        description: 'This product already exists',
-        price: 99.99,
-        categoryId: validCategoryId
-      }
-
-      const existingProduct: Product = {
-        id: 'existing-id',
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(existingProduct)
-
-      // Act & Assert
-      try {
-        await createProduct.execute(input)
-      } catch (error) {
-        expect(error).toBeInstanceOf(ProductAlreadyExistsError)
-      }
-
-      expect(randomUUID).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('Edge cases', () => {
-    it('should handle null response from findByName', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Null Test',
-        description: 'Testing null response handling',
-        price: 99.99,
-        categoryId: validCategoryId
-      }
-
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
-      const result = await createProduct.execute(input)
-
-      // Assert
-      expect(result).toEqual(expectedProduct)
-    })
-
-    it('should handle undefined response from findByName', async () => {
-      // Arrange
-      const input: CreateProductInput = {
-        name: 'Undefined Test',
-        description: 'Testing undefined response handling',
-        price: 99.99,
-        categoryId: validCategoryId
-      }
-
-      const expectedProduct: Product = {
-        id: mockUUID,
-        ...input
-      }
-
-      vi.mocked(mockRepo.findByName).mockResolvedValue(null)
-      vi.mocked(mockRepo.create).mockResolvedValue(expectedProduct)
-
-      // Act
-      const result = await createProduct.execute(input)
-
-      // Assert
-      expect(result).toEqual(expectedProduct)
-    })
+    // Assert
+    expect(mockRepo.findByName).toHaveBeenCalledOnce()
+    expect(mockRepo.create).not.toHaveBeenCalled()
   })
 })

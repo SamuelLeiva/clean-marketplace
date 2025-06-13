@@ -11,7 +11,6 @@ export class CreateUser {
     if (existing) {
       throw new UserAlreadyExistsError(input.name)
     }
-
     return await this.repo.create(input)
   }
 }
