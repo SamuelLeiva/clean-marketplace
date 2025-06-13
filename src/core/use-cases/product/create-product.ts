@@ -16,6 +16,8 @@ export class CreateProduct {
     const product: Product = {
       id: randomUUID(),
       ...input,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }
 
     return await this.repo.create(product)

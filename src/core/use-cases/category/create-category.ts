@@ -15,7 +15,9 @@ export class CreateCategory {
 
     const category: Category = {
         id: randomUUID(),
-        ...input
+        ...input,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
     }
 
     return await this.repo.create(category)
