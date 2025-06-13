@@ -1,10 +1,11 @@
+import { CreateCategoryInput, UpdateCategoryInput } from '@/shared/contracts'
 import { Category } from '../entities'
 
 export interface CategoryRepository {
-  create(category: Category): Promise<Category>
+  create(input: CreateCategoryInput): Promise<Category>
   findById(id: string): Promise<Category | null>
   findAll(): Promise<Category[]>
-  update(id: string, category: Partial<Category>): Promise<Category>
+  update(id: string, category: UpdateCategoryInput): Promise<Category>
   delete(id: string): Promise<void>
 
   // Métodos adicionales al CRUD clásico

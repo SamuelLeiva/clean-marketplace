@@ -1,10 +1,11 @@
+import { CreateSellerInput, UpdateSellerInput } from '@/shared/contracts'
 import { Seller } from '../entities'
 
 export interface SellerRepository {
-  create(seller: Seller): Promise<Seller>
+  create(seller: CreateSellerInput): Promise<Seller>
   findById(id: string): Promise<Seller | null>
   findAll(): Promise<Seller[]>
-  update(id: string, Seller: Partial<Seller>): Promise<Seller>
+  update(id: string, seller: UpdateSellerInput): Promise<Seller>
   delete(id: string): Promise<void>
 
   // Métodos adicionales al CRUD clásico

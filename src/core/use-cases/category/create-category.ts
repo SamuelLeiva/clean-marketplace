@@ -20,6 +20,6 @@ export class CreateCategory {
         updatedAt: new Date().toISOString(),
     }
 
-    return await this.repo.create(category)
+    return await this.repo.create(input)
   }
 }
