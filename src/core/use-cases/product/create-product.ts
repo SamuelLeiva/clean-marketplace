@@ -1,5 +1,4 @@
 import { CreateProductInput } from '@/shared/contracts'
-import { randomUUID } from 'crypto'
 import { ProductAlreadyExistsError } from '@/core/errors/product'
 import { ProductRepository } from '@/core/ports'
 import { Product } from '@/core/entities'
@@ -13,13 +12,6 @@ export class CreateProduct {
       throw new ProductAlreadyExistsError(input.name)
     }
 
-    const product: Product = {
-      id: randomUUID(),
-      ...input,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-
-    return await this.repo.create(product)
+    return await this.repo.create(input)
   }
 }

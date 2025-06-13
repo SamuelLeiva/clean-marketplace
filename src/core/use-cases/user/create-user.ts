@@ -1,5 +1,4 @@
 import { CreateUserInput } from '@/shared/contracts'
-import { randomUUID } from 'crypto'
 import { UserAlreadyExistsError } from '@/core/errors/user'
 import { UserRepository } from '@/core/ports'
 import { User } from '@/core/entities'
@@ -13,11 +12,6 @@ export class CreateUser {
       throw new UserAlreadyExistsError(input.name)
     }
 
-    const User: User = {
-      id: randomUUID(),
-      ...input,
-    }
-
-    return await this.repo.create(User)
+    return await this.repo.create(input)
   }
 }
