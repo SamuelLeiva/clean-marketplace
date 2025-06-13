@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { PrismaClient } from '@prisma/client'
-import { PrismaProductRepository } from '@/infrastructure/database/prisma'
+import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 
 const prisma = new PrismaClient()
 const repo = new PrismaProductRepository()

@@ -4,4 +4,6 @@ export interface Order {
     status: string
     buyerId: string
     paymentId: string
+    createdAt: string
+    updatedAt: string 
 }

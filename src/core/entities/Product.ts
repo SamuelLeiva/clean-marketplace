@@ -4,4 +4,6 @@ export interface Product {
     description: string
     price: number
     categoryId: string
+    createdAt: string
+    updatedAt: string 
 }

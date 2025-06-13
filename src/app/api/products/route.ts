@@ -1,6 +1,6 @@
 import { CreateProductInput } from '@/shared/contracts/product.contract'
 import { CreateProduct, GetAllProducts } from '@/core/use-cases/product'
-import { PrismaProductRepository } from '@/infrastructure/database/prisma'
+import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { handleError } from '@/shared/utils/handleError'
 import { NextRequest, NextResponse } from 'next/server'
 

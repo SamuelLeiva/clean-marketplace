@@ -4,7 +4,7 @@ import {
   UpdateProduct,
   DeleteProduct,
 } from '@/core/use-cases/product'
-import { PrismaProductRepository } from '@/infrastructure/database/prisma'
+import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { UpdateProductInput } from '@/shared/contracts/product.contract'
 import { handleError } from '@/shared/utils/handleError'
 

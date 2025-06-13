@@ -6,4 +6,6 @@ export interface Seller {
     bio: string
     rating: number
     totalSales: number
+    createdAt: string
+    updatedAt: string 
 }
