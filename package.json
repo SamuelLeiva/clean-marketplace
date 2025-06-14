@@ -10,7 +10,8 @@
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:unit": "vitest --config vitest.unit.config.ts",
-    "test:integration": "vitest --config vitest.integration.config.ts",
+    "test:integration:prisma-repo": "vitest --config vitest.integration.prisma-repo.config.ts",
+    "test:integration:api": "vitest --config vitest.integration.api.config.ts",
     "seed": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts",
     "prepare": "husky install"
   },

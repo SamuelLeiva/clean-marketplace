@@ -11,7 +11,7 @@ export default defineConfig({
       DATABASE_URL: env.DATABASE_URL,
     },
     include: ['src/**/*.{test,spec}.{js,ts}'],
-    exclude: ['src/tests/unit/**', 'src/tests/e2e/**'],
+    exclude: ['src/tests/unit/**', 'src/tests/e2e/**', 'src/tests/integration/api/**'],
     setupFiles: ['./src/tests/integration/setup.ts'],
     // Ejecutar tests de integración en serie para evitar conflictos de DB
     pool: 'forks',
