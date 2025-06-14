@@ -1,39 +1,24 @@
-import { PrismaClient } from '@prisma/client'
-import { beforeAll, afterAll } from 'vitest'
+import { PrismaClient } from '@prisma/client';
+import { beforeEach, afterAll } from 'vitest';
 
-// Instancia global de Prisma
-export const testPrisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL_TEST || process.env.DATABASE_URL,
-    },
-  },
-})
+const prisma = new PrismaClient();
 
-beforeAll(async () => {
-  await testPrisma.$connect()
-
-  await cleanDatabase()
-
-  console.log('🔧 Integration test setup completed')
-})
-
-// Cleanup global
-afterAll(async () => {
-  await testPrisma.$disconnect()
-  console.log('🧹 Integration test cleanup completed')
-})
-
-// Limpiar entre cada test
-// beforeEach(async () => {
-//   // Opcional: limpiar datos entre tests
-//   await cleanDatabase()
-// })
-
-// Función helper para limpiar la base de datos
-export async function cleanDatabase() {
-  // Orden importante: eliminar en orden inverso a las dependencias
-  await testPrisma.product.deleteMany()
-  await testPrisma.category.deleteMany()
-  // Agregar más modelos según sea necesario
+// Function to clear all tables. Adapt if you have more tables.
+async function clearDatabase() {
+  // You can delete records in a specific order if there are foreign key constraints
+  // For now, assuming product is independent or can be deleted directly.
+  await prisma.product.deleteMany({});
+  await prisma.category.deleteMany({});
+  // Add other tables if needed:
 }
+
+beforeEach(async () => {
+  // Clean up the database before each test to ensure isolation
+  await clearDatabase();
+});
+
+afterAll(async () => {
+  // Disconnect Prisma client after all tests are done
+  await prisma.$disconnect();
+  console.log('Prisma client disconnected');
+});

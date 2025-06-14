@@ -18,7 +18,7 @@
     "*.{ts,tsx,js,jsx}": "eslint --fix"
   },
   "dependencies": {
-    "@prisma/client": "^6.8.2",
+    "@prisma/client": "^6.9.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "class-variance-authority": "^0.7.1",
@@ -27,7 +27,6 @@
     "next": "15.3.3",
     "next-auth": "^4.24.11",
     "next-test-api-route-handler": "^4.0.16",
-    "prisma": "^6.8.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.0",
@@ -53,6 +52,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.0",
     "prettier": "^3.5.3",
+    "prisma": "^6.9.0",
     "supertest": "^7.1.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",

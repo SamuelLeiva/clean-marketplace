@@ -1,6 +1,6 @@
 import { Category } from "@/core/entities";
 import { CategoryRepository } from "@/core/ports";
-import { CreateCategoryInput } from "@/shared/contracts";
+import { CreateCategoryInput, UpdateCategoryInput } from "@/shared/contracts";
 import { PrismaClient } from "@prisma/client";
 import { normalizeCategory } from "../mappers/normalizeCategory";
 
@@ -25,7 +25,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
         return result ? normalizeCategory(result) : null;
     }
     
-    async update(id: string, input: CreateCategoryInput): Promise<Category> {
+    async update(id: string, input: UpdateCategoryInput): Promise<Category> {
         const result = await prisma.category.update({
         where: { id },
         data: input,

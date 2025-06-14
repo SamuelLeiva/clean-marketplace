@@ -9,6 +9,7 @@ const BaseCategorySchema = z.object({
     .string()
     .min(10, 'Description must be at least 10 characters')
     .max(500, 'Name must be at most 500 characters')
+    .nullable()
     .optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
