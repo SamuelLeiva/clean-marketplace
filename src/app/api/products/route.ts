@@ -2,9 +2,10 @@ import { CreateProductInput } from '@/shared/contracts/product.contract'
 import { CreateProduct, GetAllProducts } from '@/core/use-cases/product'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { handleError } from '@/shared/utils/handleError'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { ZodError } from 'zod'
 import { handleZodError } from '@/shared/utils/handleZodError'
+import { successResponse } from '@/shared/utils/apiResponse'
 
 const repo = new PrismaProductRepository()
 
@@ -12,8 +13,7 @@ export async function GET() {
   try {
     const useCase = new GetAllProducts(repo)
     const products = await useCase.execute()
-    //TODO: Standarize responses with wrapper
-    return NextResponse.json(products)
+    return successResponse(products, 'Products retrieved successfully', 200)
   } catch (error) {
     if (error instanceof ZodError) {
       return handleZodError(error)
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const useCase = new CreateProduct(repo)
     const newProduct = await useCase.execute(parsed)
 
-    return NextResponse.json(newProduct, { status: 201 })
+    return successResponse(newProduct, 'Product created successfully', 201)
   } catch (error) {
     if (error instanceof ZodError) {
       return handleZodError(error)

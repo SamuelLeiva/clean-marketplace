@@ -1,6 +1,19 @@
-export interface ApiResponse<T> {
-  data?: T
+export interface ApiResponseSuccess<T> {
+  success: true
+  data: T
   message?: string
-  errors?: unknown[]
   statusCode: number
 }
+
+export interface ApiResponseError {
+  success: false
+  message: string
+  statusCode: number
+  errors?: Array<{
+    path: string
+    message: string
+    code?: string
+  }>
+}
+
+export type ApiResponse<T = unknown> = ApiResponseSuccess<T> | ApiResponseError

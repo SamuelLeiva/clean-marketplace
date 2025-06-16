@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import {
   GetProductById,
   UpdateProduct,
@@ -7,51 +7,68 @@ import {
 import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { UpdateProductInput } from '@/shared/contracts/product.contract'
 import { handleError } from '@/shared/utils/handleError'
+import { errorResponse, successResponse } from '@/shared/utils/apiResponse'
+import { ZodError } from 'zod'
+import { handleZodError } from '@/shared/utils/handleZodError'
 
 const repo = new PrismaProductRepository()
 
-export async function GET(req: NextRequest) {
+// Helper to extract ID from dynamic routes
+// function getProductIdFromUrl(req: NextRequest): string | null {
+//   return req.nextUrl.pathname.split('/').pop() || null
+// }
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = req.nextUrl.pathname.split('/').pop()
+    const id = params.id
+
     if (!id) {
-      return handleError(new Error('Product ID is required'))
+      return errorResponse('Product ID is required in the URL path.', 400)
     }
+
     const useCase = new GetProductById(repo)
     const product = await useCase.execute(id)
-    return NextResponse.json(product)
+
+    return successResponse(product, 'Product retrieved successfully', 200)
   } catch (error) {
     return handleError(error)
   }
 }
 
-export async function PUT(req: NextRequest) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = req.nextUrl.pathname.split('/').pop()
+    const id = params.id
     if (!id) {
-      return handleError(new Error('Product ID is required'))
+      return errorResponse('Product ID is required in the URL path.', 400)
     }
+
     const body = await req.json()
     const parsed = UpdateProductInput.parse(body)
 
     const useCase = new UpdateProduct(repo)
     const updated = await useCase.execute(id, parsed)
 
-    return NextResponse.json(updated)
+    return successResponse(updated, 'Product updated successfully', 200)
   } catch (error) {
+    if (error instanceof ZodError) {
+      return handleZodError(error) // Handles Zod validation errors
+    }
     return handleError(error)
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = req.nextUrl.pathname.split('/').pop()
+    const id = params.id
+
     if (!id) {
-      return handleError(new Error('Product ID is required'))
+      return errorResponse('Product ID is required in the URL path.', 400)
     }
+
     const useCase = new DeleteProduct(repo)
     await useCase.execute(id)
 
-    return new Response(null, { status: 204 })
+    return successResponse(null, 'Product deleted successfully', 204)
   } catch (error) {
     return handleError(error)
   }
