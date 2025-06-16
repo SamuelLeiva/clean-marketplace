@@ -12,8 +12,12 @@ export async function GET() {
   try {
     const useCase = new GetAllProducts(repo)
     const products = await useCase.execute()
+    //TODO: Standarize responses with wrapper
     return NextResponse.json(products)
   } catch (error) {
+    if (error instanceof ZodError) {
+      return handleZodError(error)
+    }
     return handleError(error)
   }
 }
