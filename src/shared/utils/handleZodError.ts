@@ -11,7 +11,7 @@ export function handleZodError(error: unknown) {
     }))
     return NextResponse.json(
       {
-        message: 'Validation failed',
+        message: 'Validation failed due to invalid input',
         errors: errors,
       },
       { status: 400 },

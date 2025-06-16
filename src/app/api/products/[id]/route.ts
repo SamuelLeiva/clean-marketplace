@@ -13,14 +13,10 @@ import { handleZodError } from '@/shared/utils/handleZodError'
 
 const repo = new PrismaProductRepository()
 
-// Helper to extract ID from dynamic routes
-// function getProductIdFromUrl(req: NextRequest): string | null {
-//   return req.nextUrl.pathname.split('/').pop() || null
-// }
-
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const id = params.id
+    //getProductIdFromUrl(req)
 
     if (!id) {
       return errorResponse('Product ID is required in the URL path.', 400)
