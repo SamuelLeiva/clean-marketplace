@@ -3,6 +3,8 @@ import { CreateProduct, GetAllProducts } from '@/core/use-cases/product'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { handleError } from '@/shared/utils/handleError'
 import { NextRequest, NextResponse } from 'next/server'
+import { ZodError } from 'zod'
+import { handleZodError } from '@/shared/utils/handleZodError'
 
 const repo = new PrismaProductRepository()
 
@@ -26,6 +28,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newProduct, { status: 201 })
   } catch (error) {
+    if (error instanceof ZodError) {
+      return handleZodError(error)
+    }
     return handleError(error)
   }
 }
