@@ -9,7 +9,8 @@ import { successResponse } from '@/shared/utils/apiResponse'
 
 const repo = new PrismaProductRepository()
 
-export async function GET() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(req: NextRequest) {
   try {
     const useCase = new GetAllProducts(repo)
     const products = await useCase.execute()
