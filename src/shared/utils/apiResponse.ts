@@ -6,6 +6,11 @@ export function successResponse<T>(
   message?: string,
   status: number = 200,
 ): NextResponse {
+  // If the status is 204 No Content, return a response without a body
+  if(status === 204) {
+    return new NextResponse(null, { status })
+  }
+
   const responseBody: ApiResponseSuccess<T> = {
     success: true,
     data,

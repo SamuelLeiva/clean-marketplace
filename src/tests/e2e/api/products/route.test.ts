@@ -117,11 +117,7 @@ describe('E2E API /api/products', () => {
       const request = createMockRequest({ method: 'POST', url: '/api/products', body: validProductInput });
       const response = await createProduct(request);
 
-      console.log('Response:', response);
-
       const { json, status } = await parseNextResponse(response);
-
-      console.log('JSON Response:', json);
 
       expect(status).toBe(409);
       expect(json.success).toBe(undefined);
