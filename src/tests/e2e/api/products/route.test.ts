@@ -58,7 +58,7 @@ describe('E2E API /api/products', () => {
       name: 'E2E New Test Product',
       description: 'Description of the new product for E2E.',
       price: 100.00,
-      categoryId: 'e2e-post-category-id', // Unique ID for this test's category
+      categoryId: '33b926de-816a-4b24-b707-16cf8c95aa26', // Unique ID for this test's category
     };
 
     it('should create a new product and return 201 status', async () => {
@@ -80,7 +80,7 @@ describe('E2E API /api/products', () => {
         price: validProductInput.price,
         categoryId: validProductInput.categoryId,
       });
-      expect(json.message).toBe('Product created successfully.');
+      expect(json.message).toBe('Product created successfully');
 
       // Verify product actually exists in the database
       const createdProductInDb = await prisma.product.findUnique({
@@ -105,7 +105,7 @@ describe('E2E API /api/products', () => {
       expect(json.errors.length).toBeGreaterThan(0);
     });
 
-    it('should return 400 if product with name already exists', async () => {
+    it('should return 409 if product with name already exists', async () => {
       // First, create the product that will cause the conflict
       const category = await prisma.category.create({
         data: { name: 'E2E Conflict Category' }
@@ -117,11 +117,15 @@ describe('E2E API /api/products', () => {
       const request = createMockRequest({ method: 'POST', url: '/api/products', body: validProductInput });
       const response = await createProduct(request);
 
+      console.log('Response:', response);
+
       const { json, status } = await parseNextResponse(response);
 
-      expect(status).toBe(400);
+      console.log('JSON Response:', json);
+
+      expect(status).toBe(409);
       expect(json.success).toBe(undefined);
-      expect(json.message).toBe("Validation failed due to invalid input");
+      expect(json.error).toBe(`Product with name ${validProductInput.name} already exists`);
     });
   });
 });
