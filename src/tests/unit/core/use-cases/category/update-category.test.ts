@@ -196,7 +196,7 @@ describe('UpdateCategory Use Case', () => {
     ).rejects.toThrow(CategoryNotFoundError)
     await expect(
       updateCategory.execute(nonExistentId, updateInput),
-    ).rejects.toThrow(`Category with ID ${nonExistentId} was not found`)
+    ).rejects.toThrow(`Category with ID ${nonExistentId} not found`)
     expect(mockRepo.findById).toHaveBeenCalled()
     expect(mockRepo.findById).toHaveBeenCalledWith(nonExistentId)
     expect(mockRepo.update).not.toHaveBeenCalled()

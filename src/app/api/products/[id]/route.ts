@@ -8,12 +8,15 @@ import { PrismaProductRepository } from '@/infrastructure/database/prisma/reposi
 import { UpdateProductInput } from '@/shared/contracts/product.contract'
 import { handleError } from '@/shared/utils/handleError'
 import { errorResponse, successResponse } from '@/shared/utils/apiResponse'
-import { ZodError } from 'zod'
-import { handleZodError } from '@/shared/utils/handleZodError'
+import { PrismaClient } from '@prisma/client'
 
-const repo = new PrismaProductRepository()
+const prisma = new PrismaClient()
+const repo = new PrismaProductRepository(prisma)
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const id = params.id
     //getProductIdFromUrl(req)
@@ -31,7 +34,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const id = params.id
     if (!id) {
@@ -46,14 +52,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return successResponse(updated, 'Product updated successfully', 200)
   } catch (error) {
-    if (error instanceof ZodError) {
-      return handleZodError(error) // Handles Zod validation errors
-    }
     return handleError(error)
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const id = params.id
 

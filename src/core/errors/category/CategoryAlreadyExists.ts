@@ -1,11 +1,11 @@
 import { BaseError } from '@/shared/errors/base-error'
 
 export class CategoryAlreadyExistsError extends BaseError {
-  readonly code = 'CATEGORY_ALREADY_EXISTS'
-  readonly statusCode = 409
-
-  constructor(categoryName: string) {
-    super(`Category with name ${categoryName} already exists`)
-    this.name = 'CategoryAlreadyExistsError'
+  constructor(name: string) {
+    super(
+      `Category with name '${name}' already exists`,
+      409,
+      'CategoryAlreadyExistsError',
+    )
   }
 }
