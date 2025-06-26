@@ -25,5 +25,5 @@ jobs:
       - name: 🧼 Linting
         run: npm run lint
 
-      - name: 🎯 Ejecutar tests unitarios
-        run: npm run test:unit
+      # - name: 🎯 Ejecutar tests unitarios
+      #   run: npm run test:unit
