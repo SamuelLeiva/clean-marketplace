@@ -17,10 +17,10 @@ const repo = new PrismaCategoryRepository(prisma)
 // GET /api/categories/[id]
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }, // Directly access dynamic route parameter
+  context: { params: Promise<{ id: string }> }, // Directly access dynamic route parameter
 ) {
   try {
-    const id = params.id // Get ID from params
+    const { id } = await context.params;
 
     // A check is still good practice, though Next.js routing should ensure `id` exists here
     if (!id) {
@@ -39,10 +39,10 @@ export async function GET(
 // PUT /api/categories/[id]
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }, // Directly access dynamic route parameter
+  context: { params: Promise<{ id: string }> }, // Directly access dynamic route parameter
 ) {
   try {
-    const id = params.id // Get ID from params
+    const { id } = await context.params;
 
     if (!id) {
       return errorResponse('Category ID is required in the URL path.', 400)
@@ -63,10 +63,10 @@ export async function PUT(
 // DELETE /api/categories/[id]
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }, // Directly access dynamic route parameter
+  context: { params: Promise<{ id: string }> }, // Directly access dynamic route parameter
 ) {
   try {
-    const id = params.id // Get ID from params
+    const { id } = await context.params;
 
     if (!id) {
       return errorResponse('Category ID is required in the URL path.', 400)

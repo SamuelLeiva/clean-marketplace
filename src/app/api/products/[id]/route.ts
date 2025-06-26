@@ -15,11 +15,10 @@ const repo = new PrismaProductRepository(prisma)
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id
-    //getProductIdFromUrl(req)
+    const { id } = await context.params;
 
     if (!id) {
       return errorResponse('Product ID is required in the URL path.', 400)
@@ -36,10 +35,10 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id
+    const { id } = await context.params;
     if (!id) {
       return errorResponse('Product ID is required in the URL path.', 400)
     }
@@ -58,10 +57,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id
+    const { id } = await context.params;
 
     if (!id) {
       return errorResponse('Product ID is required in the URL path.', 400)
