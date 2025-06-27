@@ -16,6 +16,11 @@ const BaseProductSchema = z.object({
     })
     .positive('Price must be greater than 0')
     .finite(),
+  stock: z
+    .number()
+    .min(0, 'Stock must be at least 0')
+    .optional(),
+  imageUrl: z.string().url('Invalid image URL'),
   categoryId: z.string().uuid('Invalid category ID'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

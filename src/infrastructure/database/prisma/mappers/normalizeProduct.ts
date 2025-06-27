@@ -7,6 +7,7 @@ export function normalizeProduct(product: PrismaProduct): Product {
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
     description: product.description ?? undefined,
-    // Ensure description is undefined if it is null
+    imageUrl: product.imageUrl ?? undefined,
+    // Ensure description and imageUrl are undefined if they are null
   };
 }

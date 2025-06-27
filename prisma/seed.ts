@@ -1,54 +1,121 @@
-// prisma/seed.ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
-  // Elimina datos anteriores (opcional en desarrollo)
-  await prisma.product.deleteMany()
-  await prisma.category.deleteMany()
+  console.log('Iniciando la inserción de datos...');
 
-  // Crear categorías
-  const books = await prisma.category.create({
-    data: { name: 'Books' },
-  })
+  // --- 1. Insertar Categorías ---
+  const category1 = await prisma.category.upsert({
+    where: { name: 'Electrónica' },
+    update: {}, 
+    create: {
+      name: 'Electrónica',
+      description: 'Productos electrónicos como teléfonos, computadoras y accesorios.',
+    },
+  });
 
-  const electronics = await prisma.category.create({
-    data: { name: 'Electronics' },
-  })
+  const category2 = await prisma.category.upsert({
+    where: { name: 'Ropa' },
+    update: {},
+    create: {
+      name: 'Ropa',
+      description: 'Ropa y accesorios de moda.',
+    },
+  });
 
-  // Crear productos
-  await prisma.product.createMany({
-    data: [
-      {
-        name: 'Clean Code',
-        price: 39.99,
-        categoryId: books.id,
-        description: "Awesome book"
-      },
-      {
-        name: 'The Pragmatic Programmer',
-        price: 42.5,
-        categoryId: books.id,
-        description: "Awesome book 2"
-      },
-      {
-        name: 'Smartphone XYZ',
-        price: 599.99,
-        categoryId: electronics.id,
-        description: "Awesome smartphone"
-      },
-    ],
-  })
+  const category3 = await prisma.category.upsert({
+    where: { name: 'Hogar y Jardín' },
+    update: {},
+    create: {
+      name: 'Hogar y Jardín',
+      description: 'Todo lo relacionado con el hogar y el jardín.',
+    },
+  });
 
-  console.log('✅ Seed completed!')
+  console.log('Categorías insertadas/actualizadas:', {
+    category1,
+    category2,
+    category3,
+  });
+
+  // --- 2. Insertar Productos ---
+  const product1 = await prisma.product.upsert({
+    where: { id: 'prod_001' }, // Un ID fijo para upsert, puedes usar un UUID aleatorio si no quieres un ID fijo
+    update: {
+      name: 'Smartphone X',
+      description: 'El último modelo de smartphone con cámara de alta resolución.',
+      price: 799.99,
+      stock: 50,
+      imageUrl: 'https://example.com/smartphone-x.jpg',
+      categoryId: category1.id, // Enlaza al ID de la categoría "Electrónica"
+    },
+    create: {
+      id: 'prod_001', // Solo si quieres un ID fijo para el upsert, de lo contrario, déjalo que Prisma lo genere
+      name: 'Smartphone X',
+      description: 'El último modelo de smartphone con cámara de alta resolución.',
+      price: 799.99,
+      stock: 50,
+      imageUrl: 'https://example.com/smartphone-x.jpg',
+      categoryId: category1.id, // Enlaza al ID de la categoría "Electrónica"
+    },
+  });
+
+  const product2 = await prisma.product.upsert({
+    where: { id: 'prod_002' },
+    update: {
+      name: 'Camiseta Algodón Orgánico',
+      description: 'Camiseta suave y cómoda hecha de algodón 100% orgánico.',
+      price: 25.00,
+      stock: 200,
+      imageUrl: 'https://example.com/camiseta-organica.jpg',
+      categoryId: category2.id, // Enlaza al ID de la categoría "Ropa"
+    },
+    create: {
+      id: 'prod_002',
+      name: 'Camiseta Algodón Orgánico',
+      description: 'Camiseta suave y cómoda hecha de algodón 100% orgánico.',
+      price: 25.00,
+      stock: 200,
+      imageUrl: 'https://example.com/camiseta-organica.jpg',
+      categoryId: category2.id, // Enlaza al ID de la categoría "Ropa"
+    },
+  });
+
+  const product3 = await prisma.product.upsert({
+    where: { id: 'prod_003' },
+    update: {
+      name: 'Set de Sartenes Antiadherentes',
+      description: 'Set de 3 sartenes de alta calidad para tu cocina.',
+      price: 89.99,
+      stock: 30,
+      imageUrl: 'https://example.com/sartenes.jpg',
+      categoryId: category3.id, // Enlaza al ID de la categoría "Hogar y Jardín"
+    },
+    create: {
+      id: 'prod_003',
+      name: 'Set de Sartenes Antiadherentes',
+      description: 'Set de 3 sartenes de alta calidad para tu cocina.',
+      price: 89.99,
+      stock: 30,
+      imageUrl: 'https://example.com/sartenes.jpg',
+      categoryId: category3.id, // Enlaza al ID de la categoría "Hogar y Jardín"
+    },
+  });
+
+  console.log('Productos insertados/actualizados:', {
+    product1,
+    product2,
+    product3,
+  });
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error('Error durante la inserción de datos:', e);
+    process.exit(1);
   })
-  .finally(() => {
-    prisma.$disconnect()
-  })
+  .finally(async () => {
+    await prisma.$disconnect();
+    console.log('Conexión a la base de datos cerrada.');
+  });
