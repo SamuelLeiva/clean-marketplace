@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Limpiando la base de datos...');
+  await prisma.product.deleteMany({});
+  await prisma.category.deleteMany({});
+  console.log('Base de datos limpiada.');
+
   console.log('Iniciando la inserción de datos...');
 
   // --- 1. Insertar Categorías ---
@@ -33,10 +38,40 @@ async function main() {
     },
   });
 
+  const category4 = await prisma.category.upsert({
+    where: { name: 'Libros' },
+    update: {},
+    create: {
+      name: 'Libros',
+      description: 'Una colección de libros de diversos géneros.',
+    },
+  });
+
+  const category5 = await prisma.category.upsert({
+    where: { name: 'Videojuegos' },
+    update: {},
+    create: {
+      name: 'Videojuegos',
+      description: 'Una colección de videojuegos de diversos géneros.',
+    },
+  });
+
+  const category6 = await prisma.category.upsert({
+    where: { name: 'Calzado' },
+    update: {},
+    create: {
+      name: 'Calzado',
+      description: 'Una colección de calzado de diversos estilos.',
+    },
+  });
+
   console.log('Categorías insertadas/actualizadas:', {
     category1,
     category2,
     category3,
+    category4,
+    category5,
+    category6,
   });
 
   // --- 2. Insertar Productos ---
