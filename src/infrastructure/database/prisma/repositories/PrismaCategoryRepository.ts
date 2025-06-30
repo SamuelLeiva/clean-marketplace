@@ -1,5 +1,5 @@
 import { Category } from '@/core/entities'
-import { CategoryRepository, PaginationOptions } from '@/core/ports'
+import { CategoryRepository } from '@/core/ports'
 import {
   CreateCategoryInput,
   PaginatedCategoryListResponse,
@@ -7,6 +7,7 @@ import {
 } from '@/shared/contracts'
 import { PrismaClient } from '@prisma/client'
 import { normalizeCategory } from '../mappers/normalizeCategory'
+import { PaginationOptions } from '@/shared/constants/pagination'
 
 //const prisma = new PrismaClient()
 

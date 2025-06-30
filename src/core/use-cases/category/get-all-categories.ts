@@ -1,5 +1,6 @@
 //import { Category } from '@/core/entities'
-import { CategoryRepository, PaginationOptions } from '@/core/ports'
+import { CategoryRepository } from '@/core/ports'
+import { PaginationOptions } from '@/shared/constants/pagination';
 import { PaginatedCategoryListResponse } from '@/shared/contracts'
 
 interface GetAllCategoriesInput {

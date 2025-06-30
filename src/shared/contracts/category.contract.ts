@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PaginationMetaSchema } from '../constants/pagination'
 
 const BaseCategorySchema = z
   .object({
@@ -34,14 +35,9 @@ export const CategoryResponse = BaseCategorySchema.extend({
   updatedAt: true,
 })
 
-export const PaginationMetaSchema = z.object({
-  totalItems: z.number().int().nonnegative(),
-  totalPages: z.number().int().nonnegative(),
-  currentPage: z.number().int().positive(),
-  itemsPerPage: z.number().int().positive(),
-})
 
-export const CategoryListResponse = z.array(CategoryResponse)
+
+//export const CategoryListResponse = z.array(CategoryResponse)
 
 export const PaginatedCategoryListResponse = z.object({
   data: z.array(CategoryResponse),
@@ -53,6 +49,6 @@ export type CreateCategoryInput = z.infer<typeof CreateCategoryInput>
 export type UpdateCategoryInput = z.infer<typeof UpdateCategoryInput>
 export type CategoryResponse = z.infer<typeof CategoryResponse>
 // Lista de categorías sin paginación
-export type CategoryListResponse = z.infer<typeof CategoryListResponse>
+//export type CategoryListResponse = z.infer<typeof CategoryListResponse>
 
 export type PaginatedCategoryListResponse = z.infer<typeof PaginatedCategoryListResponse>

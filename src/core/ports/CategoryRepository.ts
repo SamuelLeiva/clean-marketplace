@@ -1,11 +1,6 @@
 import { CreateCategoryInput, PaginatedCategoryListResponse, UpdateCategoryInput } from '@/shared/contracts'
 import { Category } from '../entities'
-
-export interface PaginationOptions {
-  page: number;
-  limit: number;
-  // You might add orderBy, filters, etc. later
-}
+import { PaginationOptions } from '@/shared/constants/pagination'
 
 export interface CategoryRepository {
   create(input: CreateCategoryInput): Promise<Category>

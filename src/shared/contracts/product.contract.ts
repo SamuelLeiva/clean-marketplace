@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PaginationMetaSchema } from '../constants/pagination'
 
 const BaseProductSchema = z.object({
   name: z
@@ -20,7 +21,7 @@ const BaseProductSchema = z.object({
     .number()
     .min(0, 'Stock must be at least 0')
     .optional(),
-  imageUrl: z.string().url('Invalid image URL'),
+  imageUrl: z.string().url('Invalid image URL').nullable().optional(),
   categoryId: z.string().uuid('Invalid category ID'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
@@ -43,9 +44,16 @@ export const ProductResponse = BaseProductSchema.extend({
   updatedAt: true,
 })
 
-export const ProductListResponse = z.array(ProductResponse)
+// export const ProductListResponse = z.array(ProductResponse)
+
+export const PaginatedProductListResponse = z.object({
+  data: z.array(ProductResponse),
+  meta: PaginationMetaSchema,
+})
+
+export type PaginatedProductListResponse = z.infer<typeof PaginatedProductListResponse>
 
 export type CreateProductInput = z.infer<typeof CreateProductInput>
 export type UpdateProductInput = z.infer<typeof UpdateProductInput>
 export type ProductResponse = z.infer<typeof ProductResponse>
-export type ProductListResponse = z.infer<typeof ProductListResponse>
+//export type ProductListResponse = z.infer<typeof ProductListResponse>

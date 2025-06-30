@@ -2,10 +2,12 @@ import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
 import {
   CreateProductInput,
+  PaginatedProductListResponse,
   UpdateProductInput,
 } from '@/shared/contracts/product.contract'
 import { PrismaClient } from '@prisma/client'
 import { normalizeProduct } from '../mappers/normalizeProduct'
+import { PaginationOptions } from '@/shared/constants/pagination'
 
 export class PrismaProductRepository implements ProductRepository {
   private prisma: PrismaClient
@@ -21,10 +23,38 @@ export class PrismaProductRepository implements ProductRepository {
     return normalizeProduct(result)
   }
 
-  async findAll(): Promise<Product[]> {
-    const results = await this.prisma.product.findMany()
-    return results.map(normalizeProduct)
-  }
+  async findAllPaginated(
+      options: PaginationOptions,
+    ): Promise<PaginatedProductListResponse> {
+      const { page, limit } = options
+      const skip = (page - 1) * limit // Calculate how many records to skip
+      // Use Prisma's findMany with skip and take for pagination
+      const products = await this.prisma.product.findMany({
+        skip: skip,
+        take: limit,
+        // You can add orderBy or where clauses here if needed
+        // orderBy: { name: 'asc' },
+      })
+
+      // Get the total count of products for pagination metadata
+      const totalItems = await this.prisma.product.count()
+      const totalPages = Math.ceil(totalItems / limit)
+  
+      return {
+        data: products,
+        meta: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          itemsPerPage: limit,
+        },
+      }
+    }
+
+  // async findAll(): Promise<Product[]> {
+  //   const results = await this.prisma.product.findMany()
+  //   return results.map(normalizeProduct)
+  // }
 
   async findById(id: string): Promise<Product | null> {
     const result = await this.prisma.product.findUnique({ where: { id } })
