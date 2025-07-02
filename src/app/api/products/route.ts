@@ -1,9 +1,9 @@
-import { CreateProductInput } from '@/shared/contracts/product.contract'
+import { CreateProductInput, GetProductsFilterInput } from '@/shared/contracts/product.contract'
 import { CreateProduct, GetAllProducts } from '@/core/use-cases/product'
 import { PrismaProductRepository } from '@/infrastructure/database/prisma/repositories'
 import { handleError } from '@/shared/utils/handleError'
 import { NextRequest } from 'next/server'
-import { errorResponse, successResponse } from '@/shared/utils/apiResponse'
+import { successResponse } from '@/shared/utils/apiResponse'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -11,27 +11,53 @@ const repo = new PrismaProductRepository(prisma)
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = req.nextUrl; // Get URL search parameters
+    const { searchParams } = req.nextUrl // Get URL search parameters
 
-    // Extract page and limit from query params, parse them as numbers
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '10', 10); // Default to 10 items per page
-
-    // Input validation for page and limit (optional but recommended)
-    if (isNaN(page) || page < 1) {
-      return errorResponse('Invalid page number. Page must be a positive integer.', 400);
+    // Convert URLSearchParams to a plain object for Zod validation
+    const queryParams: Record<string, unknown> = {}
+    for (const [key, value] of searchParams.entries()) {
+      // Zod will handle type coercion for numbers/booleans if you use .transform() or .pipe()
+      // For simplicity, we'll parse basic types here or let Zod's .pipe(z.coerce.number()) handle it.
+      if (
+        [
+          'page',
+          'limit',
+          'minStock',
+          'maxStock',
+          'minPrice',
+          'maxPrice',
+        ].includes(key)
+      ) {
+        queryParams[key] = parseFloat(value) // Use parseFloat for price, parseInt for stock/page/limit
+      } else {
+        queryParams[key] = value
+      }
     }
-    if (isNaN(limit) || limit < 1) {
-      return errorResponse('Invalid limit number. Limit must be a positive integer.', 400);
-    }
 
-    const useCase = new GetAllProducts(repo);
-    // Pass the extracted pagination options to the use case
-    const paginatedProducts = await useCase.execute({ page, limit });
+    // --- Validate query parameters using Zod ---
+    // Make sure to parse numbers correctly as Zod's parse will treat query strings as strings initially.
+    // Use z.coerce.number() for robust conversion from string to number.
+    const filters = GetProductsFilterInput.parse({
+      name: queryParams.name,
+      minStock: queryParams.minStock,
+      maxStock: queryParams.maxStock,
+      minPrice: queryParams.minPrice,
+      maxPrice: queryParams.maxPrice,
+      categoryId: queryParams.categoryId,
+      page: queryParams.page, // Zod's default will apply if not present
+      limit: queryParams.limit, // Zod's default will apply if not present
+    })
 
-    return successResponse(paginatedProducts, 'Products retrieved successfully', 200);
+    const useCase = new GetAllProducts(repo)
+    const paginatedProducts = await useCase.execute(filters)
+
+    return successResponse(
+      paginatedProducts,
+      'Products retrieved successfully',
+      200,
+    )
   } catch (error) {
-    return handleError(error);
+    return handleError(error)
   }
 }
 

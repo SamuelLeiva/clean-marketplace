@@ -2,12 +2,12 @@ import { Product } from '@/core/entities/Product'
 import { ProductRepository } from '@/core/ports/ProductRepository'
 import {
   CreateProductInput,
+  GetProductsFilterInput,
   PaginatedProductListResponse,
   UpdateProductInput,
 } from '@/shared/contracts/product.contract'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { normalizeProduct } from '../mappers/normalizeProduct'
-import { PaginationOptions } from '@/shared/constants/pagination'
 
 export class PrismaProductRepository implements ProductRepository {
   private prisma: PrismaClient
@@ -24,32 +24,84 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findAllPaginated(
-      options: PaginationOptions,
-    ): Promise<PaginatedProductListResponse> {
-      const { page, limit } = options
-      const skip = (page - 1) * limit // Calculate how many records to skip
-      // Use Prisma's findMany with skip and take for pagination
-      const products = await this.prisma.product.findMany({
-        skip: skip,
-        take: limit,
-        // You can add orderBy or where clauses here if needed
-        // orderBy: { name: 'asc' },
-      })
+    filters: GetProductsFilterInput,
+  ): Promise<PaginatedProductListResponse> {
+    const {
+      page,
+      limit,
+      name,
+      minStock,
+      maxStock,
+      minPrice,
+      maxPrice,
+      categoryId,
+    } = filters
+    const skip = (page - 1) * limit
 
-      // Get the total count of products for pagination metadata
-      const totalItems = await this.prisma.product.count()
-      const totalPages = Math.ceil(totalItems / limit)
-  
-      return {
-        data: products,
-        meta: {
-          totalItems,
-          totalPages,
-          currentPage: page,
-          itemsPerPage: limit,
-        },
+    // Build the Prisma 'where' clause dynamically based on filters
+    // We will build this object by adding conditions as needed
+    const where: Prisma.ProductWhereInput = {}
+
+    // Filter by name
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive',
       }
     }
+
+    // Filter by stock range
+    if (minStock !== undefined || maxStock !== undefined) {
+      // Ensure 'stock' is initialized as an object before adding properties
+      where.stock = {} // Initialize as empty object if any stock filter is present
+      if (minStock !== undefined) {
+        where.stock.gte = minStock
+      }
+      if (maxStock !== undefined) {
+        where.stock.lte = maxStock
+      }
+    }
+
+    // Filter by price range
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      // Ensure 'price' is initialized as an object before adding properties
+      where.price = {} // Initialize as empty object if any price filter is present
+      if (minPrice !== undefined) {
+        where.price.gte = minPrice
+      }
+      if (maxPrice !== undefined) {
+        where.price.lte = maxPrice
+      }
+    }
+
+    // Filter by category ID
+    if (categoryId) {
+      where.categoryId = categoryId
+    }
+
+    const [productsRaw, totalItems] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where,
+        skip: skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.product.count({ where }),
+    ])
+
+    const products = productsRaw.map(normalizeProduct)
+    const totalPages = Math.ceil(totalItems / limit)
+
+    return {
+      data: products,
+      meta: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        itemsPerPage: limit,
+      },
+    }
+  }
 
   // async findAll(): Promise<Product[]> {
   //   const results = await this.prisma.product.findMany()
