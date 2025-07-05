@@ -7,6 +7,6 @@ export interface CartItem {
   product?: Product; 
   quantity: number;
   priceAtTimeOfAddition: number; 
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

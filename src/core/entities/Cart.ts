@@ -4,7 +4,7 @@ export interface Cart {
   id: string;
   userId: string;
   status: 'active' | 'abandoned' | 'converted';
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   cartItems: CartItem[]; // Relación con los ítems individuales del carrito
 }
