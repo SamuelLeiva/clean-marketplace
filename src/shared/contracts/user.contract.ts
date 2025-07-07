@@ -1,40 +1,42 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
+// Esquema base para los datos de usuario
 const BaseUserSchema = z.object({
-  name: z
-    .string()
-    .min(3, 'Name must be at least 3 characters')
-    .max(100, 'Name must be at most 100 characters'),
-  lastName: z
-    .string()
-    .min(3, 'Name must be at least 3 characters')
-    .max(100, 'Name must be at most 100 characters'),
-  email: z.string().email(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters').optional(),
+  email: z.string().email('Invalid email address'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-}).strict()
+}).strict();
 
-export const CreateUserInput = BaseUserSchema.omit({
+// Esquema para la entrada de registro (signup)
+export const SignUpInput = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters').optional(),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(100, 'Password must be at most 100 characters'),
+}).strict();
+
+// Esquema para la entrada de login
+export const LoginInput = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'), // No se valida el largo aquí, solo que exista
+}).strict();
+
+// Esquema para la respuesta de un usuario (sin password ni timestamps para el cliente)
+export const UserResponse = BaseUserSchema.omit({
   createdAt: true,
   updatedAt: true,
-})
-
-export const UpdateUserInput = BaseUserSchema.partial().omit({
-  createdAt: true,
-  updatedAt: true,
-})
-
-export const UserResponse = BaseUserSchema.extend({
+}).extend({
   id: z.string().uuid(),
-}).omit({
-  createdAt: true,
-  updatedAt: true,
-})
+}).strict();
 
-export const UserListResponse = z.array(UserResponse)
+// Esquema para la respuesta de login (usuario + token)
+export const LoginResponse = z.object({
+  user: UserResponse,
+  token: z.string(), // El JWT o token de sesión
+}).strict();
 
-export type CreateUserInput = z.infer<typeof CreateUserInput>
-export type UpdateUserInput = z.infer<typeof UpdateUserInput>
-export type UserResponse = z.infer<typeof UserResponse>
-export type UserListResponse = z.infer<typeof UserListResponse>
+// Inferred types
+export type SignUpInput = z.infer<typeof SignUpInput>;
+export type LoginInput = z.infer<typeof LoginInput>;
+export type UserResponse = z.infer<typeof UserResponse>;
+export type LoginResponse = z.infer<typeof LoginResponse>;
