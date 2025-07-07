@@ -13,7 +13,7 @@ const BaseUserSchema = z.object({
 export const SignUpInput = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters').optional(),
   email: z.string().email('Invalid email address'),
-  hashedPassword: z.string().min(8, 'Password must be at least 8 characters').max(100, 'Password must be at most 100 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(100, 'Password must be at most 100 characters'),
 }).strict();
 
 // Esquema para la entrada de login
