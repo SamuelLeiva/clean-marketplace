@@ -24,7 +24,7 @@ export class SignUp {
     const newUser = await this.userRepo.create({
       name,
       email,
-      password: hashedPassword,
+      hashedPassword, // Almacena el hash, no la contraseña plana
     });
 
     return newUser; // Retorna la entidad User (sin la contraseña hashed)

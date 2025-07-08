@@ -23,11 +23,8 @@ export const LoginInput = z.object({
 }).strict();
 
 // Esquema para la respuesta de un usuario (sin password ni timestamps para el cliente)
-export const UserResponse = BaseUserSchema.omit({
-  createdAt: true,
-  updatedAt: true,
-}).extend({
-  id: z.string().uuid(),
+export const UserResponse = BaseUserSchema.extend({
+  id: z.string().uuid('Invalid user ID format'), 
 }).strict();
 
 // Esquema para la respuesta de login (usuario + token)

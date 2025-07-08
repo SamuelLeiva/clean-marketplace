@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client'
 import { UserRepository } from '@/core/ports/UserRepository'
 import { User } from '@/core/entities'
 import { normalizeUser } from '../mappers/normalizeUser' // Tu normalizador de usuario
-import { SignUpInput } from '@/shared/contracts'
 import bcrypt from 'bcryptjs'
 
 export class PrismaUserRepository implements UserRepository {
@@ -22,12 +21,16 @@ export class PrismaUserRepository implements UserRepository {
     return user ? normalizeUser(user) : null
   }
 
-  async create(input: SignUpInput): Promise<User> {
+  async create(userData: {
+    name?: string
+    email: string
+    hashedPassword: string
+  }): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
-        name: input.name,
-        email: input.email,
-        password: input.password, // Almacena el hash, no la contraseña plana
+        name: userData.name,
+        email: userData.email,
+        password: userData.hashedPassword, // Almacena el hash, no la contraseña plana
       },
     })
     return normalizeUser(user)
