@@ -1,5 +1,6 @@
 
 import { Cart, CartItem } from '@/core/entities';
+import { PrismaCartWithItemsAndProducts } from '@/infrastructure/database/prisma/mappers/normalizeCart';
 
 export interface CartRepository {
   // Find or create an active cart for a user
@@ -25,4 +26,11 @@ export interface CartRepository {
 
   // Check if a cart item exists (useful before updating/deleting)
   getCartItemById(cartItemId: string): Promise<CartItem | null>;
+
+  // NUEVO MÉTODO: Obtener el carrito de usuario en su formato Prisma crudo con productos
+  getRawCartByUserIdWithProducts(userId: string): Promise<PrismaCartWithItemsAndProducts | null>;
+
+  // NUEVO MÉTODO: Encontrar o crear un carrito de usuario en su formato Prisma crudo con productos
+  findOrCreateRawCartWithProducts(userId: string): Promise<PrismaCartWithItemsAndProducts>;
+
 }

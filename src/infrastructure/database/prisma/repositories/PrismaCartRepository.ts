@@ -130,4 +130,50 @@ export class PrismaCartRepository implements CartRepository {
     })) as PrismaCartItemWithProduct | null
     return cartItem ? normalizeCartItem(cartItem) : null
   }
+
+  // --- NUEVOS MÉTODOS (devuelven el tipo Prisma crudo con relaciones) ---
+
+  async getRawCartByUserIdWithProducts(userId: string): Promise<PrismaCartWithItemsAndProducts | null> {
+    const prismaCart = await this.prisma.cart.findUnique({
+      where: { userId: userId },
+      include: {
+        cartItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+    return prismaCart as PrismaCartWithItemsAndProducts | null;
+  }
+
+  async findOrCreateRawCartWithProducts(userId: string): Promise<PrismaCartWithItemsAndProducts> {
+    let prismaCart = await this.prisma.cart.findUnique({
+      where: { userId: userId },
+      include: {
+        cartItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!prismaCart) {
+      prismaCart = await this.prisma.cart.create({
+        data: {
+          userId: userId,
+          status: 'ACTIVE', // Asegúrate de usar el valor correcto del enum de Prisma
+        },
+        include: {
+          cartItems: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+    }
+    return prismaCart as PrismaCartWithItemsAndProducts;
+  }
 }
