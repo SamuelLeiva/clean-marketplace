@@ -30,14 +30,7 @@ export const UpdateCategoryInput = BaseCategorySchema.partial().omit({
 
 export const CategoryResponse = BaseCategorySchema.extend({
   id: z.string().uuid(),
-}).omit({
-  createdAt: true,
-  updatedAt: true,
-})
-
-
-
-//export const CategoryListResponse = z.array(CategoryResponse)
+});
 
 export const PaginatedCategoryListResponse = z.object({
   data: z.array(CategoryResponse),
@@ -48,7 +41,5 @@ export const PaginatedCategoryListResponse = z.object({
 export type CreateCategoryInput = z.infer<typeof CreateCategoryInput>
 export type UpdateCategoryInput = z.infer<typeof UpdateCategoryInput>
 export type CategoryResponse = z.infer<typeof CategoryResponse>
-// Lista de categorías sin paginación
-//export type CategoryListResponse = z.infer<typeof CategoryListResponse>
 
 export type PaginatedCategoryListResponse = z.infer<typeof PaginatedCategoryListResponse>
