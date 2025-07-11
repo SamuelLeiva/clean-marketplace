@@ -41,9 +41,7 @@ export function normalizeCartItemForResponse(
     priceAtTimeOfAddition: cartItem.priceAtTimeOfAddition,
     createdAt: cartItem.createdAt.toISOString(),
     updatedAt: cartItem.updatedAt.toISOString(),
-    product: normalizedProduct!, // Asegúrate de que 'product' no sea undefined si el esquema Zod lo espera como NO opcional
-    // *** IMPORTANTE: NO INCLUIR 'cartId' aquí si tu CartItemResponse del contrato no lo tiene. ***
-    // Tu CartItemResponse no tiene cartId, por lo tanto, no lo retornamos aquí.
+    product: normalizedProduct!, 
   };
 }
 
