@@ -1,5 +1,6 @@
 import { UnauthorizedError } from '@/core/errors/auth'
-import { JwtService } from '@/core/services/JwtService'
+import { JwtService } from '@/infrastructure/services/JwtService'
+
 import { NextRequest } from 'next/server'
 
 const jwtService = new JwtService()

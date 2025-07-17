@@ -1,5 +1,5 @@
 import { UserRepository } from '@/core/ports/UserRepository'
-import { IJwtService } from '@/core/services/JwtService'
+import { IJwtService } from '@/core/ports/JwtService'
 import { LoginInput } from '@/shared/contracts/user.contract'
 import { User } from '@/core/entities'
 import { InvalidCredentialsError } from '@/core/errors/auth'

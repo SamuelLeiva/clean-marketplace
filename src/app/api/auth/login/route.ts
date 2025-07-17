@@ -3,13 +3,13 @@ import { PrismaClient } from '@prisma/client'
 
 // Dependencias de Infraestructura y Core
 import { PrismaUserRepository } from '@/infrastructure/database/prisma/repositories/PrismaUserRepository'
-import { JwtService } from '@/core/services/JwtService'
 import { Login } from '@/core/use-cases/auth/Login'
 
 // Utilidades y Contratos Zod
 import { successResponse } from '@/shared/utils/apiResponse'
 import { handleError } from '@/shared/utils/handleError'
 import { LoginInput, LoginResponse } from '@/shared/contracts/user.contract'
+import { JwtService } from '@/infrastructure/services/JwtService'
 
 const prisma = new PrismaClient()
 const userRepo = new PrismaUserRepository(prisma)

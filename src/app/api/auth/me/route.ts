@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 
 // Dependencias de Infraestructura y Core
 import { PrismaUserRepository } from '@/infrastructure/database/prisma/repositories/PrismaUserRepository'
-import { JwtService } from '@/core/services/JwtService' // Para verificar el token
 import { GetUserProfile } from '@/core/use-cases/auth/GetUserProfile'
 
 // Utilidades y Contratos Zod
@@ -11,6 +10,9 @@ import { successResponse } from '@/shared/utils/apiResponse'
 import { handleError } from '@/shared/utils/handleError'
 import { UserResponse } from '@/shared/contracts/user.contract'
 import { UnauthorizedError } from '@/core/errors/auth'
+
+// Servicio JWT
+import { JwtService } from '@/infrastructure/services/JwtService'
 
 const prisma = new PrismaClient()
 const userRepo = new PrismaUserRepository(prisma)
