@@ -22,7 +22,6 @@ export const CartItemResponse = z.object({
     name: true,
     price: true,
     imageUrl: true,
-    description: true,
   }),
   quantity: z.number().int().min(1),
   priceAtTimeOfAddition: z.number().positive(),
