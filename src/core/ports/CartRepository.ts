@@ -15,10 +15,10 @@ export interface CartRepository {
   addProductToCart(cartId: string, productId: string, quantity: number, price: number): Promise<CartItem>;
 
   // Update quantity of an existing cart item
-  updateCartItemQuantity(cartItemId: string, quantity: number): Promise<CartItem>;
+  updateCartItemQuantity(userId: string, cartItemId: string, quantity: number): Promise<CartItem>;
 
   // Remove a product from the cart
-  removeCartItem(cartItemId: string): Promise<void>;
+  removeCartItem(userId: string, cartItemId: string): Promise<void>;
 
   // Clear all items from a cart
   clearCart(cartId: string): Promise<void>;

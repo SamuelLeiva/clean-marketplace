@@ -7,6 +7,11 @@ import {
   PrismaCartItemWithProduct,
   PrismaCartWithItemsAndProducts,
 } from '../mappers/normalizeCart'
+import {
+  CartItemNotFoundError,
+  InvalidCartOperationError,
+  UnauthorizedCartAccessError,
+} from '@/core/errors/cart'
 
 export class PrismaCartRepository implements CartRepository {
   private prisma: PrismaClient
@@ -100,18 +105,82 @@ export class PrismaCartRepository implements CartRepository {
   }
 
   async updateCartItemQuantity(
+    userId: string,
     cartItemId: string,
     quantity: number,
   ): Promise<CartItem> {
-    const updatedItem = (await this.prisma.cartItem.update({
+    // 1. Encontrar el cartItem y su carrito asociado para verificar la propiedad
+    const prismaCartItem = await this.prisma.cartItem.findUnique({
       where: { id: cartItemId },
-      data: { quantity: quantity },
-      include: { product: true }, // Incluye el producto para la normalización
-    })) as PrismaCartItemWithProduct
-    return normalizeCartItem(updatedItem)
+      include: {
+        cart: {
+          select: {
+            userId: true,
+          },
+        },
+        product: true, // Incluir el producto para la conversión a dominio
+      },
+    })
+
+    if (!prismaCartItem) {
+      throw new CartItemNotFoundError(cartItemId)
+    }
+
+    // ✅ Verificar si el item pertenece al usuario correcto
+    if (prismaCartItem.cart?.userId !== userId) {
+      throw new UnauthorizedCartAccessError(
+        `Cart item ${cartItemId} does not belong to user ${userId}.`,
+      )
+    }
+
+    // Si la cantidad es 0 o menos, podrías decidir eliminar el ítem aquí o dejarlo en el Use Case.
+    // Si lo haces aquí, considera que ya tendrías un método removeCartItem que haría lo mismo.
+    if (quantity <= 0) {
+      await this.removeCartItem(userId, cartItemId) // Reutilizar el método de eliminación
+      // Puedes devolver el CartItem que fue eliminado con cantidad 0, o null, o un tipo especial.
+      // Para simplicidad, podríamos simplemente re-obtener el carrito después y devolverlo si tu UC lo espera.
+      // O hacer que el UC que llama a esto maneje el caso de cantidad 0.
+      // Por ahora, lanzaremos un error si no lo quieres permitir con 0.
+      throw new InvalidCartOperationError(
+        'Quantity must be at least 1. Use remove operation for 0 quantity.',
+      )
+    }
+
+    // 2. Actualizar la cantidad
+    const updatedPrismaCartItem = await this.prisma.cartItem.update({
+      where: { id: cartItemId },
+      data: { quantity, updatedAt: new Date() },
+      include: { product: true },
+    })
+
+    return normalizeCartItem(updatedPrismaCartItem)
   }
 
-  async removeCartItem(cartItemId: string): Promise<void> {
+  async removeCartItem(userId: string, cartItemId: string): Promise<void> {
+    // 1. Encontrar el cartItem y su carrito asociado para verificar la propiedad
+    const prismaCartItem = await this.prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: {
+        cart: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    })
+
+    if (!prismaCartItem) {
+      throw new CartItemNotFoundError(cartItemId)
+    }
+
+    // ✅ Verificar si el item pertenece al usuario correcto
+    if (prismaCartItem.cart?.userId !== userId) {
+      throw new UnauthorizedCartAccessError(
+        `Cart item ${cartItemId} does not belong to user ${userId}.`,
+      )
+    }
+
+    // 2. Eliminar el item
     await this.prisma.cartItem.delete({
       where: { id: cartItemId },
     })
